@@ -1,0 +1,308 @@
+\section{Considerações iniciais}
+Neste capítulo serão descritos conceitos básicos de processamento de imagens usados na literatura, para a detecção e contagem de plantas.
+
+\subsection{Índices de vegetação}
+
+Basicamente um índice de vegetação~\cite{Torres2014}, é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar os pixels de vegetação por pixels de não-vegetação, que é aplicado no solo, leitos de água, estradas, construções, entre outros. Um índice de vegetação toma como entrada uma imagem colorida ou multiespectral e retorna uma imagem em níveis de cinza, onde os pixels que contém uma maior evidência de que seja vegetação, terá valores mais altos. Ainda, foi revisado vários experimentos de índices de vegetação, com o intuito de evidênciar os pixels que pertencem as copas das árvores. Na equação(~\ref{eq:normRGB}) é mostrada a entrada para os cálculos desses índices, que são os valores dos canais R, G e B do sistema de cor RGB e as combinações dos índices.
+
+\begin{equation}
+    r = \frac{R}{R+G+B}; g = \frac{G}{R+G+B}; b = \frac{B}{R+G+B}
+    \label{eq:normRGB}
+\end{equation}
+
+A seguir são listados os índices de vegetação apresentados em \cite{Torres2014}.
+
+$\textbf{Índice de diferença verde-vermelho normalizado:}$
+\begin{equation}
+    NGRDI = \frac{G - R}{G + R}
+\end{equation}
+
+$\textbf{Excesso de verde:}$
+\begin{equation}
+    ExG(2) = 2g - r - b
+\end{equation}
+
+$\textbf{Índice de cores da vegetação:}$
+\begin{equation}
+    CIVE = 0.441r - 0.881g + 0.385b + 18.78745
+\end{equation}
+
+$\textbf{Vegetativen:}$
+\begin{equation} 
+    VEG = \frac{g}{r^{a} b^{(1-a)}}  \ com \ a = 0.667 \ em \ sua \ referência %Não sei o porque deste errinho
+\end{equation}
+
+$\textbf{Excesso de verde menos excesso de vermelho:}$
+\begin{equation}
+    ExGR = ExG - ExR = ExG - 1.4r-g
+\end{equation}
+
+$\textbf{Índice Woebbecke:}$
+\begin{equation}
+    WI = \frac{g-b}{r-g}
+\end{equation}
+
+$\textbf{Combinação 1:}$
+\begin{equation}
+    COM(1) = 0.25ExG + 0.3ExGR + 0.33CIVE + 0.12VEG
+\end{equation}
+
+$\textbf{Combinação 2:}$
+\begin{equation}
+    COM(2) = 0.36ExG + 0.47CIVE + 0.17VEG
+\end{equation}
+
+
+\subsection{Morfologia Matemática para imagens binárias}
+
+Na área de Biologia a palavra "morfologia" geralmente lida com a forma e a estrutura de animais e plantas. Usamos esta palavra com o mesmo contexto na morfologia matemática, como uma ferramenta para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A teoria dos conjuntos é a linguagem base da morfologia matemática. 
+Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto (normalmente em primeiro plano) na imagem. \cite{Gonzales2010}
+
+Na área de processamento digital de imagens, a morfologia emprega dois tipos de conjuntos de pixels: objetos ($A$) e elementos estruturantes ($B$). Os objetos são conjuntos de pixels dos objetos de interesse, já os elementos estruturantes são especificados para fazer análise e processamentos dos objetos de interesse, e normalmente levam em conta as características geométricas destes. 
+
+\subsubsection{Erosão}
+Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominus B$, é definida como:
+\begin{equation}
+     A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
+\end{equation}
+
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, esta equação indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{FAZER EXEMPLO DE EROSÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
+
+
+\subsubsection{Dilatação}
+Novamente sendo $A$ e $B$ conjuntos em $Z^{2}$, a dilatação de $A$ por $B$, denotada como $A \oplus B$, é definida como: 
+\begin{equation}
+    A \oplus B = \left \{ Z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
+\end{equation}
+sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$.
+\sergio{FAZER EXEMPLO DE EROSÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
+
+\subsubsection{Abertura}
+
+A abertura do conjunto $A$ pelo elemento estruturante $B$, indicado por $A \circ  B$, é definida como
+\begin{equation}
+    A \circ B = \left ( A \ominus  B \right )\oplus  B
+\end{equation}
+
+Assim, a abertura $A$ por $B$ é a erosão de $A$ por $B$, seguida de uma dilatação do resultado por $B$. 
+A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreitos e elimina saliências finas.
+
+\subsubsection{Fechamento}
+O fechamento do conjunto $A$ pelo elemento estruturante $B$, denominado $A \bullet B$, é definido como
+\begin{equation}
+    A \bullet  B = \left ( A \oplus  B \right )\ominus  B
+\end{equation}
+ou seja, o fechamento de $A$ por $B$ é simplesmente a dilatação de $A$ por $B$, seguido pela erosão do resultado por $B$. 
+O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno.
+
+\subsection{Rotulação de Componentes conectados}
+Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitos aplicações automatizadas de análise de imagem. Seja $A$ um conjunto de pixels de objetos que consiste em um ou mais componentes conectados e forme uma imagem $X_{0}$ (do mesmo tamanho que $I$, a imagem que contém $A$) cujos elementos são 0's (valores do plano de fundo), exceto em cada local conhecido por corresponder a um ponto em cada componente conectado em A, que definimos como 1 (valor de pixel de objeto). O objetivo é começar com $ X_ {0}$ e encontrar todos os componentes conectados em I. Um procedimento iterativo que a seguir realiza isso:
+\begin{equation}
+    X_{k} = (X_{k-1} \oplus B) \cap I \qquad \qquad k = 1,2,3...
+\end{equation}
+
+onde B é o elemento estruturante. O procedimento termina quando $X_{k} = X_{k-1}$, com $X_{k}$ contendo todos os componentes conectados dos pixels em primeiro plano na imagem. 
+
+\subsection{Método de Otsu}
+
+Segundo \cite{Gonzales2010}, o método é ótimo no sentido de maximizar a variação entre classes, uma medida bem conhecida usada na análise estatística discriminante. A idéia básica é que as classes com limiares apropriados devem ser distintas com respeito aos valores de intensidade de seus pixels e, inversamente, que um limite que ofereça a melhor separação entre as classes em termos de seus valores de intensidade seja o melhor (ótimo) limite. Além de sua otimização, o método de Otsu tem a propriedade importante de que ele se baseia inteiramente em cálculos realizados no histograma de uma imagem, uma matriz 1-D facilmente obtida.
+
+Seja {0, 1, 2 ... L-1} denotar o conjunto de L níveis de intensidade inteira distintos em uma imagem digital de tamanho M$\times$N pixels, e seja $n_{i}$ o número de pixels com intensidade i.
+O número total, MN, de pixels na imagem é MN = $n_{0} + n_{1} + n_{2} + + n_{L-1}$. O histograma normalizado possui componentes $p_{i} = n_{i}$ / MN, dos quais se segue que
+\begin{equation}
+    \sum_{i=0}^{L-1} p_{i}=1 \qquad \qquad p_{i}\geq 0
+\end{equation}
+
+Agora, suponha que selecionamos um limite T(k) = k, 0 < k < L-1, e use-o para limitar a imagem de entrada em duas classes, $c_{1}$ e $c_{2}$, onde $c_{1}$ consiste em todos os pixels na imagem com valores de intensidade no intervalo [0,k] e $c_{2}$ consiste em pixels com valores no intervalo $[k+1, L-1]$. Usando esse limite, a probabilidade, $P_{1}(k)$, de que um pixel é atribuído à classe $c_{1}$ (ou seja, com limite para) é dada pela soma cumulativa
+\begin{equation}
+    p_{1}(k) = \sum_{i=0}^{k} p_{i}
+\end{equation}
+
+Visto de outra maneira, essa é a probabilidade da classe $c_{1}$ ocorrer. Por exemplo, se definirmos k=0, a probabilidade da classe $c_{1}$ ter pixels atribuídos a ela é zero. Da mesma forma, a probabilidade de ocorrência da classe $c_{2}$ é
+\begin{equation}
+    p_{2}(k) = \sum_{i=k+1}^{L-1} p_{i} = 1- p_{1}(k)
+\end{equation}
+
+O valor médio da intensidade dos pixels em $c_{1}$ é
+\begin{equation}
+    \begin{split}
+    m_{1}(k) = \sum_{i=0}^{k}iP(i/c_{1}) = \sum_{i=0}^{k} iP(c_{1}/i)P(i)/P(c_{1}) \\
+    = \frac{1}{P_{1}(k)}\sum_{i=0}^{k} ip_{i}
+    \end{split}
+\end{equation}
+
+onde $P_{1}$(k) é dado pela Eq.(2.16). O termo P(i/$c_{1}$) na Eq. (2.18) é a probabilidade do valor de intensidade i, dado que i provém da classe $c_{1}$. O termo mais à direita na primeira linha da equação segue da fórmula de Bayes:
+\begin{equation}
+P(A/B) = P(B/A)P(A)/P(B)    
+\end{equation}
+
+A segunda linha decorre do fato de que P($c_{1}$/i), a probabilidade de $c_{1}$ dado i, é 1 porque estamos lidando apenas com valores de i da classe $c_{1}$. Além disso, P(i) é a probabilidade do i-ésimo valor, que é o i-ésimo componente do histograma, $p_{i}$. Finalmente, P($c_{1}$) é a probabilidade da classe $c_{1}$ que, da Eq.(2.16), é igual a $P_{1}$(k).
+Da mesma forma, o valor médio da intensidade dos pixels atribuídos à classe $c_{2}$ é
+\begin{equation}
+    \begin{split}
+        m_{2}(k) = \sum_{i=k+1}^{L-1}iP(i/c_{2}) \\
+        = \frac{1}{P_{2}(k)} \sum_{i=k+1}^{L-1} i p_{i}
+    \end{split}
+\end{equation}
+
+A média acumulada(intensidade média) até o nível k é dada por
+\begin{equation}
+    m(k) = \sum_{i=0}^{k} i p_{i}
+\end{equation}
+
+e a intensidade média de toda a imagem (ou seja, a média global) é dada por
+\begin{equation}
+    m_{G} = \sum_{i=0}^{L-1} ip_{i}
+\end{equation}
+
+A validade das duas equações a seguir pode ser verificada por substituição direta dos resultados anteriores:
+\begin{equation}
+    P_{1}m_{1} + P_{2}m_{2} = m_{G}
+\end{equation}
+
+e
+\begin{equation}
+    P_{1} + P_{2} = 1
+\end{equation}
+
+onde omitimos os ks temporariamente em favor da clareza notacional.
+
+Para avaliar a eficácia do limiar no nível k, é usada a medida normalizada, sem dimensão
+\begin{equation}
+    \eta  = \frac{\sigma _{B}^{2}}{\sigma_{G}^{2}}
+\end{equation}
+
+onde $\sigma_{G}^{2}$ é a variação global, ou seja, a variação de intensidade de todos os pixels da imagem,
+\begin{equation}
+\sigma_{G}^{2} = \sum_{i=0}^{L-1}(i - m_{G})^{2} p_{i}    
+\end{equation}
+
+e $\sigma_{B}^{2}$ é a variação entre classes, definida como
+\begin{equation}
+    \sigma_{B}^{2} = P_{1}(m_{1} - m_{G})^{2} + P_{2}(m_{2} -m_{G})^{2}
+\end{equation}
+
+Essa expressão também pode ser escrita como
+\begin{equation}
+    \begin{split}
+             \sigma_{B}^{2} = P_{1}P_{2}(m_{1} - m_{2})^{2} \\
+            = \frac{(m_{G}P_{1} - m)^{2}}{P_{1}(1-P_{1})}
+    \end{split}
+\end{equation}
+
+A primeira linha desta equação segue das Equações(2.23), (2.24) e (2.27). A segunda linha segue das Equações (2.17) a (2.22). Essa forma é um pouco mais eficiente computacionalmente porque a média global, $m_{G}$, é calculada apenas uma vez; portanto, apenas dois parâmetros, $m_{1}$ e $P_{1}$, precisam ser computados para qualquer valor de k.
+A primeira linha na Equação(2.28) indica que quanto mais as duas médias $m_{1}$ e $m_{2}$ estiverem uma da outra, maior $\sigma_{B}^{2}$  será, implicando que a variação entre classes é uma medida de separabilidade entre classes. Como $\sigma_{G}^{2}$ é uma constante, segue-se que $\eta$ também é uma medida de separabilidade, e maximizar essa métrica é equivalente a maximizar $\sigma_{B}^{2}$. O objetivo, então, é determinar o valor do limite, k, que maximize a variação entre as classes, conforme declarado anteriormente. Observe que a Equação (2.25) assume implicitamente que $\sigma_{G}^{2}$ > 0. Essa variação pode ser zero somente quando todos os níveis de intensidade da imagem forem
+o mesmo, o que implica a existência de apenas uma classe de pixels. Por sua vez, isso significa que $\eta$ = 0 para uma imagem constante porque a separabilidade de uma única classe de si mesma é zero.
+
+Reintroduzindo k, temos os resultados finais:
+\begin{equation}
+    \eta(k) = \frac{\sigma_{B}^{2}(k)}{\sigma_{G}^{2}}
+\end{equation}
+
+e
+
+\begin{equation}
+    \sigma_{B}^{2}(k) = \frac{[m_   {G}P_{1}(k) - m(k)]^2}{P_{1}(k)[1-P_{1}(k)]}
+\end{equation}
+
+Então, o limite ideal é o valor, k*, que maximiza $\sigma_{B}^{2}$ (k):
+\begin{equation}
+    \sigma_{B}^{2}(k^{*}) = _{0\leq k \leq L-1}^{max \ \sigma_{B}^{2}(k)}
+\end{equation}
+
+Para encontrar $k^{*}$, simplesmente avaliamos essa equação para todos os valores inteiros de k (sujeito à condição 0<$P_{1}$(k)<1) e selecionamos o valor de k que produziu o máximo de $\sigma_{B}^{2}$(k).
+Se o máximo existe para mais de um valor de k, é habitual calcular a média dos vários valores de k para os quais $\sigma_{B}^{2}$(k) é máximo.  Avaliando as Equações (2.30) e (2.31) para todos os valores de k é um procedimento computacional relativamente barato, porque o número máximo de valores inteiros que k pode ter é L, que é apenas 256 para imagens de 8 bits.
+
+Uma vez obtido $k^{*}$, a imagem de entrada f(x, y) é segmentada como antes:
+\begin{equation}
+      g(x,y) = \left \{  \begin{array}{cc}
+        1  & if \ f(x,y) > k^{*}\\
+        1  & if \ f(x,y) \leq  k^{*} \\
+    \end{array} \right \}
+\end{equation}
+
+para x = 0,1,2,...,M-1 e y = 0,1,2,...,N-1. Observe que todas as quantidades necessárias para avaliar a Equação(2.30) são obtidos usando apenas o histograma de f(x,y). Além do limite ideal, outras informações sobre a imagem segmentada podem ser extraídas do histograma. Por exemplo, $P_{1}$ ($k^{*}$) e $P_{2}$ ($k^{*}$), as probabilidades da classe avaliadas no limite ideal, indicam as partes das áreas ocupadas pelas classes (grupos de pixels) na imagem em limiar. Da mesma forma, as médias $m_{1} (k^{*})$ e $m_{2} (k^{*})$ são estimativas da intensidade média das classes na imagem original.
+
+Em geral, a medida na Equação(2.29) tem valores na faixa
+\begin{equation}
+    0 \leq \eta(k) \leq  1
+\end{equation}
+
+para valores de k no intervalo [0, L-1]. Quando avaliada no limiar ideal $k^{*}$, essa medida é uma estimativa quantitativa da separabilidade de classes, o que, por sua vez, nos dá uma idéia da precisão de limiar uma determinada imagem com $k^{*}$. O limite inferior na Equação(2.33) é atingível apenas por imagens com um nível de intensidade único e constante. O limite superior é atingível apenas por imagens de dois valores com intensidades
+igual a 0 e L-1.
+
+
+\subsection{Transformada de Distância}
+Foi mostrado por \citeonline{Maurer2003}, a métrica de distância $L_{p}$
+\begin{equation}
+    \Delta (x,y) = \left ( \sum_{i=1}^{k}\mid x_{i} - y_{i} \mid ^p \right )\tfrac{1}{p} \ \ ,
+\end{equation}
+
+onde x e y são k-tuplas, $x_{i}$ e $_{i}$  são as i-ésimas coordenadas de x e y, e 1 $\leq$ p $\leq \infty$ . As métricas $L_{1}$, $L_{2}$ e $L_{1}$ são conhecidas como distâncias de Manhattan ou quarteirão, Euclidiana e tabuleiro de xadrez. A seguinte métrica ponderada da distância $L_{p}$ é
+\begin{equation}
+      \Delta (x,y) = \left ( \sum_{i=1}^{k} \mid w_{i}(x_{i} - y_{i}) \mid ^p \right )\tfrac{1}{p} \ \ ,
+\end{equation}
+
+onde $w_{i}$ é o peso das i-ésimas coordenadas de x e y. As métricas de distância: $\Delta$: $R^{k} \times R^{k} \rightarrow R$  satisfazem as seguintes propriedades:
+
+$\textbf{Propriedade 1}$: Definitividade positiva; $\Delta (x,y) = 0 \ \  if \ f \ \ x = y$
+
+$\textbf{Propriedade 2}$: Simetria; $\Delta(x,y) = \Delta(y,x) \ for \ any \ x \ and \ y $
+
+$\textbf{Propriedade 3}$: Desigualdade de triângulo; $\Delta(x,z)\leq  \Delta(x,y) + \Delta(y,z) \ for \ any \ x , \ y, \ and \ z $
+
+$\textbf{Propriedade 4}$: Monotonicidade; Seja x e y duas k-tuplas que diferem apenas nos valores das coordenadas (ou seja, $x_{i}$ = $y_{i}$, i $\neq$ d). Para concretude, assuma que $x_{d}$ < $y_{d}$. Para qualquer $\textbf{u}$ e $\textbf{v}$ de tal forma que 1) $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v) e $\Delta$(y,v) < $\Delta$(y,$\textbf{u}$) ou 2) $\Delta$(x,$\textbf{u}$) < $\Delta$(x,v) e $\Delta$(y,v) $\leq$ $\Delta$(y,$\textbf{u}$) detém , $u_{d}$ < $u_{d}$
+
+$\textbf{Propriedade 5}$. Seja x e y duas k-tuplas que diferem apenas nos valores das coordenadas dth (ou seja, $x_{i}$ = $y_{i}$, i $\neq$ d). Seja $\textbf{u}$ e $\textbf{v}$ duas k-tuplas com valores idênticos das coordenadas dth (ou seja, $u_{d}$ = $v_{d}$. Se $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v), então $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(y,v).
+
+
+\subsection{Watershed}
+Segundo \cite{Gonzales2010}, o conceito de Watershed(bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões, duas coordenadas espaciais versus intensidade. Nessa interpretação “topográfica”, consideramos três tipos de pontos: 1- Pontos pertencentes a um mínimo regional; 2- Pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um único mínimo; e 3- Pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2, é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
+
+O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica. 
+Uma das principais aplicações, é a extração de objetos quase uniformes (semelhantes a bolhas) do fundo. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente. Assim, na prática, geralmente vemos a segmentação de bacias hidrográficas aplicada ao gradiente de uma imagem, e não a própria imagem. Nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.
+
+A construção da barragem do algoritmo de segmentação das bacias hidrográficas, é baseada em imagens binárias, que são membros do espaço 2-D do número inteiro $Z^{2}$. A maneira mais simples de construir barragens que separam conjuntos de pontos binários, é usar a dilatação morfológica.
+Primeiramente, para a construção das barragens é aplicado a dilatação. Posteriormente, possui a etapa de inundação n-1, a água derrama de uma bacia para outra, e uma represa deve ser construída para impedir que isso aconteça. $M_{1}$ e $M_{2}$ denotam os conjuntos de coordenadas de pontos em dois mínimos regionais. Em seguida, deixe o conjunto de coordenadas de pontos na bacia hidrográfica associado a esses dois mínimos no estágio n-1 da inundação, sendo denotados por $C_{n-1} (M_{1})$ e $C_{n-1} (M_{2})$.
+
+Dois componentes conectados que se tornaram um único componente, indicam que a água entre as duas bacias hidrográficas, se fundiu na etapa de inundação n. Esse componente  é deixado de ser conectado se for indicado por q. 
+Suponha que cada um dos componentes conectados seja dilatado pelo elemento estruturador, sujeito a duas condições: 1- A dilatação deve ser restringida a q (isso significa que o centro do elemento estruturador pode ser localizado apenas nos pontos em q durante a dilatação); e 2- A dilatação não pode ser realizada em pontos que causariam a dilatação dos conjuntos (isto é, se tornariam um único componente conectado). 
+
+É evidente que os únicos pontos em q, que satisfazem as duas condições, descrevem o caminho conectado de um pixel de espessura hachurado. Esse caminho é a barragem de separação desejada no estágio n das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
+
+\subsection{Medidas de precisão dos resultados}
+Podemos quantificar o desempenho de um algoritmo de correspondência em um determinado limite, contando primeiro o número de correspondências verdadeiras e falsas, e falhas de correspondência, usando as seguintes definições:\cite{Szeliski2010}
+
+\textbf{TP:} verdadeiros positivos, isto é, número de correspondências corretas;
+
+\textbf{FN:} falsos negativos, correspondências que não foram detectadas corretamente;
+
+\textbf{FP:} falsos positivos, correspondências propostas incorretas;
+
+\textbf{TN:} negativos verdadeiros, não correspondências que foram corretamente rejeitadas.
+
+
+Podemos converter esses números em taxas unitárias, definindo as seguintes quantidades:
+
+\textbf{TPR:} taxa positiva verdadeira,
+\begin{equation}
+    TPR: \frac{TP}{TP + FN} = \frac{TP}{P};
+\end{equation}
+
+\textbf{FPR:} taxa de falso positivos,
+\begin{equation}
+    FPR: \frac{FP}{FP+TN} = \frac{FP}{N};
+\end{equation}
+
+\textbf{PPV:}valor preditivo positivo,
+\begin{equation}
+    PPV = \frac{TP}{TP+FP} = \frac{TP}{P'};
+\end{equation}
+
+\textbf{ACC}: acurácia,
+\begin{equation}
+    ACC = \frac{TP+TN}{P+N};
+\end{equation}
+
+O termo  \textit{precisão} (quantos documentos retornados são relevantes) é usado em vez de PPV e \textit{recall} (qual fração documentos relevantes foi encontrado) é usado no lugar do TPR.
+Qualquer estratégia de correspondência específica (em um determinado limite ou configuração de parâmetro) pode ser classificada pelos números TPR e FPR; idealmente, a taxa positiva verdadeira será próxima de 1 e a taxa positiva falsa próxima de 0.

@@ -1,0 +1,194 @@
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+% UFGRC: Modelo de Trabalho Acadêmico em conformidade com 
+% ABNT NBR 14724:2011: Informação e documentação - Trabalhos acadêmicos -
+% Apresentação
+% ------------------------------------------------------------------------
+% ------------------------------------------------------------------------
+
+% Opções: 
+%   Tipo do trabalho     = tcc1/tcc2
+%   Situação do trabalho = pre-defesa/pos-defesa
+% -- opções do pacote babel --
+% Idioma padrão = brazil
+	%english,			% idioma adicional para hifenização
+	%brazil		% o último idioma é o PRINCIPAL do documento
+\documentclass[tcc2, pos-defesa, english, brazil]{packages/ufgrc}
+% ---------------------------------------------------------------------------
+% Pacotes Opcionais
+% ---------------------------------------------------------------------------
+\usepackage{rotating}   % Usado para rotacionar o texto
+\usepackage[all,knot,arc,import,poly]{xy}   % Pacote para desenhos gráficos
+\usepackage{color}
+% Este pacote pode conflitar com outros pacotes gráficos como o ``pictex''
+% Então é necessário usar apenas um dos pacotes conflitantes
+\newcommand{\VerbL}{0.52\textwidth}
+\newcommand{\LatL}{0.42\textwidth}
+
+\newcommand\sergio[1]{{\color{red}#1}}
+\newcommand\patricia[1]{{\color{green}#1}}
+% ---------------------------------------------------------------------------
+
+
+% ---
+% Informações de dados para CAPA e FOLHA DE ROSTO
+% ---
+% Tanto na capa quanto nas folhas de rosto apenas a primeira letra da primeira palavra (ou nomes próprios) devem estar em letra maiúscula, todas as demais devem ser em letra minúscula.
+\titulo{Estudo de técnicas de análise de imagens para contagem de plantas}
+\autor[Silva, P.D.d.]{Patrícia Duarte da Silva}
+\genero{F} % Gênero do autor (M = Masculino / F = Feminino)
+\orientador[Orientador]{Prof. Dr.}{Sérgio Francisco da Silva}
+%\coorientador{Prof. Dr.}{Fulano de Tal}
+\data{03}{6}{2019} % Data da defesa
+% ---
+
+% Membros da banca examinadora
+% - O primeiro membro será automaticamente o orientador
+% - Caso haja coorientador, este será o segundo membro
+% Nome dos demais membros e suas instituições
+\membrobanca{Fulano de Tal}{Instituição do Fulano de Tal}
+\membrobanca{Ciclano de Tal}{Instituição do Ciclano de Tal}
+
+% ---
+% RESUMOS
+% ---
+
+% Resumo em PORTUGUÊS
+% conter no máximo 500 palavras
+% conter no mínimo 1 e no máximo 5 palavras-chave (obrigatoriamente separadas por vírgula)
+\textoresumo[brazil]{
+   A automação da tarefa de contagem de plantas a partir de imagens de sensoriamento remoto tem se tornado importante para variados diagnósticos agrícolas tal como previsão de produtividade, mapeamento de uso da terra, geração de índices pelo acompanhamento temporal de mortalidade de plantas que podem ser associados a doenças e condições climáticas, entre vários outros. Pesquisas recentes têm desenvolvido métodos de análise de imagens e aplicado estes para a contagem de algumas espécies de plantas tal como palmeiras, oliveiras, citros e eucaliptus. Nesta pesquisa pretendemos investigar e desenvolver uma abordagem computacional para a contagem de jabuticabeiras a partir de imagens de satélite. Pretende-se desenvolver uma abordagem que confie em métodos clássicos de processamento de imagens, como índices de vegetação, limiarização, morfologia matemática, caracterização de objetos e classificação. Espera-se que os resultados obtidos tragam contribuições tanto para área de processamento de imagens quanto para a área de análise agrícola. 
+    }{Contagem de plantas, processamento de imagens, imagens de satélite.}
+
+
+% resumo em INGLÊS
+% conter no máximo 500 palavras
+% conter no mínimo 1 e no máximo 5 palavras-chave (obrigatoriamente separadas por vírgula)
+\textoresumo[english]{
+The automation of the plant counting task from remote sensing images has become important for a variety of agricultural diagnoses such as productivity prediction, land use mapping, generation of indices by temporal monitoring of plant mortality that can be associated with diseases and climatic conditions, among several others. Recent research has developed methods of image analysis and applied these for counting some species of plants such as palm trees, olive trees, citrus and eucalyptus. In this research we intend to investigate and develop a computational approach to jabuticaba counting from satellite images. It is intended to develop an approach that relies on classical methods of image processing, such as vegetation indexes, thresholding, mathematical morphology, object characterization and classification. It is hoped that the results obtained will bring contributions to both the image processing area and the agricultural analysis area.
+    }{Contagem de plantas, processamento de imagens, imagens de satélite.}
+% ---
+% Configurações de aparência do PDF final
+% ---
+\hypersetup{
+	colorlinks=true     % false: boxed links; true: colored links
+}
+% --- 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+
+% Inserir a ficha catalográfica
+%\incluifichacatalografica*{tex/pre-textual/fichaCatalografica.pdf}
+\incluifichacatalografica
+
+% DEDICATÓRIA / AGRADECIMENTO / EPÍGRAFE
+\textodedicatoria*{tex/pre-textual/dedicatoria}
+\textoagradecimentos*{tex/pre-textual/agradecimentos}
+\textoepigrafe*{tex/pre-textual/epigrafe}
+
+% Inclui a lista de figuras
+\incluilistadefiguras
+
+% Inclui a lista de tabelas
+\incluilistadetabelas
+
+% Inclui a lista de quadros
+\incluilistadequadros
+
+% Inclui a lista de algoritmos
+\incluilistadealgoritmos
+
+% Inclui a lista de códigos
+\incluilistadecodigos
+
+% Inclui a lista de siglas e abreviaturas
+\incluilistadesiglas
+
+% Inclui a lista de símbolos
+\incluilistadesimbolos
+
+% ----
+% Início do documento
+% ----
+\begin{document}
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+
+\chapter{Introdução}
+\label{chapter:introducao}
+\input{tex/introducao}
+
+\chapter{Conceitos de processamento de imagens para detecção e contagem de plantas}
+\label{chapter:orientacoes-gerais}
+\input{tex/orientacoes-gerais}
+
+\chapter{Trabalhos correlacionados}
+\label{chapter:instalando-abntex}
+\input{tex/instalando-abntex}
+
+\chapter{METODOLOGIA}
+\label{chapter:config-pre-textual}
+\input{tex/config-pre-textual}
+
+\chapter{Conclusão}
+\label{chapter:corpos-flutuantes}
+\input{tex/corpos-flutuantes}
+
+% ---
+% Finaliza a parte no bookmark do PDF, para que se inicie o bookmark na raiz
+% ---
+\bookmarksetup{startatroot}% 
+% ---
+
+% ----------------------------------------------------------
+% ELEMENTOS PÓS-TEXTUAIS
+% ----------------------------------------------------------
+\postextual
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\bibliography{references}
+
+% ---------------------------------------------------------------------
+% GLOSSÁRIO
+% ---------------------------------------------------------------------
+
+% Arquivo que contém as definições que vão aparecer no glossário
+\input{tex/glossario}
+% Comando para incluir todas as definições do arquivo glossario.tex
+\glsaddall
+% Impressão do glossário
+\printglossaries
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+
+% ---
+% Inicia os apêndices
+% ---
+\begin{apendicesenv}
+
+    \chapter{Códigos}
+    \label{chapter:documento-basico}
+    \input{tex/appendix/documento-basico}
+
+\end{apendicesenv}
+% ---
+
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+
+% ---
+% Inicia os anexos
+% ---
+
+\end{document}

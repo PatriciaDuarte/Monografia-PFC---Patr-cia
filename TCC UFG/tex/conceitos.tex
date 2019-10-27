@@ -1,9 +1,11 @@
 \section{Considerações iniciais}
-Neste capítulo serão descritos conceitos básicos de processamento de imagens usados na literatura, para a detecção e contagem de plantas.
+Neste capítulo serão descritos conceitos básicos de processamento de imagens usados na literatura para a detecção e contagem de plantas. Como essa pesquisa foca em abordagens baseada em detecção de picos e em segmentação por crescimento de regiões através método baseado em inundação (\textit{watershed}), os conceitos descritos são relacionados ou base para o desenvolvimento de métodos baseados nessa abordagem mencionadas. Tanto para métodos baseados em segmentação tenta-se a intenção de fazer um pré-processamento que sirva às duas abordagens, que inclui a aplicação de índices de vegetação e binarização, visando obter os pixels candidatos à árvores.
 
 \subsection{Índices de vegetação}
 
-Basicamente um índice de vegetação~\cite{Torres2014}, é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar os pixels de vegetação por pixels de não-vegetação, que é aplicado no solo, leitos de água, estradas, construções, entre outros. Um índice de vegetação toma como entrada uma imagem colorida ou multiespectral e retorna uma imagem em níveis de cinza, onde os pixels que contém uma maior evidência de que seja vegetação, terá valores mais altos. Ainda, foi revisado vários experimentos de índices de vegetação, com o intuito de evidênciar os pixels que pertencem as copas das árvores. Na equação(~\ref{eq:normRGB}) é mostrada a entrada para os cálculos desses índices, que são os valores dos canais R, G e B do sistema de cor RGB e as combinações dos índices.
+Basicamente um índice de vegetação~\cite{Torres2014}, é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar os pixels de vegetação dos pixels de não-vegetação, tais como no solo, leitos de água, estradas, construções, entre outros. Um índice de vegetação toma como entrada uma imagem colorida ou multiespectral e retorna uma imagem em níveis de cinza, onde os pixels que contém uma maior evidência de que seja vegetação, terá valores mais altos. \citeonline{Torres2014} revisou vários índices de vegetação para a detecção de linhas de plantio de \sergio{INSERIR CULTURA AGRÍCOLA}. Neste trabalho experimentaremos estes índices no contexto de detecção de copa de árvores através de imagens de satélite. 
+
+A entrada para o cálculo dos índices de vegetação são os valores R, G e B dos sistema de cores RGB, a normalização destes dada pela equação(~\ref{eq:normRGB}) ou combinações de índices.
 
 \begin{equation}
     r = \frac{R}{R+G+B}; g = \frac{G}{R+G+B}; b = \frac{B}{R+G+B}
@@ -55,18 +57,19 @@ $\textbf{Combinação 2:}$
 
 \subsection{Morfologia Matemática para imagens binárias}
 
-Na área de Biologia a palavra "morfologia" geralmente lida com a forma e a estrutura de animais e plantas. Usamos esta palavra com o mesmo contexto na morfologia matemática, como uma ferramenta para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A teoria dos conjuntos é a linguagem base da morfologia matemática. 
-Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto (normalmente em primeiro plano) na imagem. \cite{Gonzales2010}
+Na área de Biologia a palavra `morfologia' geralmente lida com a forma e a estrutura de animais e plantas. \sergio{processamento de imagens, morfologia matemática constitui ferramentas para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A base para a descrição das operações morfológicas é a  teoria dos conjuntos. Este trabalho descreve os conceitos básicos de morfologia matemática para imagens tomando como base o livro de \citeonline{Gonzales2010}.}
 
-Na área de processamento digital de imagens, a morfologia emprega dois tipos de conjuntos de pixels: objetos ($A$) e elementos estruturantes ($B$). Os objetos são conjuntos de pixels dos objetos de interesse, já os elementos estruturantes são especificados para fazer análise e processamentos dos objetos de interesse, e normalmente levam em conta as características geométricas destes. 
+Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto na imagem. 
+
+\sergio{A morfologia para imagens binárias} contém dois tipos de conjuntos de pixels: objetos ($A$) e elementos estruturantes ($B$). Os objetos são conjuntos de pixels dos objetos de interesse, já os elementos estruturantes são especificados para fazer análise e processamentos dos objetos de interesse, e normalmente levam em conta as características geométricas destes. 
 
 \subsubsection{Erosão}
 Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominus B$, é definida como:
 \begin{equation}
      A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
+     \label{eq:erosao}
 \end{equation}
-
-onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, esta equação indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{FAZER EXEMPLO DE EROSÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{FAZER EXEMPLO DE EROSÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
 
 
 \subsubsection{Dilatação}
@@ -86,29 +89,29 @@ A abertura do conjunto $A$ pelo elemento estruturante $B$, indicado por $A \circ
 
 Assim, a abertura $A$ por $B$ é a erosão de $A$ por $B$, seguida de uma dilatação do resultado por $B$. 
 A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreitos e elimina saliências finas.
+\sergio{FAZER EXEMPLO DE ABERTURA PARA ILUSTRAR}
 
 \subsubsection{Fechamento}
 O fechamento do conjunto $A$ pelo elemento estruturante $B$, denominado $A \bullet B$, é definido como
 \begin{equation}
     A \bullet  B = \left ( A \oplus  B \right )\ominus  B
 \end{equation}
-ou seja, o fechamento de $A$ por $B$ é simplesmente a dilatação de $A$ por $B$, seguido pela erosão do resultado por $B$. 
-O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno.
+ou seja, o fechamento de $A$ por $B$ é dado pela dilatação de $A$ por $B$, seguido pela erosão do resultado por $B$. 
+O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno. \sergio{FAZER EXEMPLO DE ABERTURA PARA ILUSTRAR}
 
 \subsection{Rotulação de Componentes conectados}
-Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitos aplicações automatizadas de análise de imagem. Seja $A$ um conjunto de pixels de objetos que consiste em um ou mais componentes conectados e forme uma imagem $X_{0}$ (do mesmo tamanho que $I$, a imagem que contém $A$) cujos elementos são 0's (valores do plano de fundo), exceto em cada local conhecido por corresponder a um ponto em cada componente conectado em A, que definimos como 1 (valor de pixel de objeto). O objetivo é começar com $ X_ {0}$ e encontrar todos os componentes conectados em I. Um procedimento iterativo que a seguir realiza isso:
+
+Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitos aplicações automatizadas de análise de imagem. Seja $A$ um conjunto de pixels de objetos que consiste em um ou mais componentes conectados. \sergio{Seja $X_{0}$ um pixel pixel de objeto de $A$. Pode-se extrair o componente conectado pelo procedimento interativo dado por}: 
 \begin{equation}
     X_{k} = (X_{k-1} \oplus B) \cap I \qquad \qquad k = 1,2,3...
 \end{equation}
-
-onde B é o elemento estruturante. O procedimento termina quando $X_{k} = X_{k-1}$, com $X_{k}$ contendo todos os componentes conectados dos pixels em primeiro plano na imagem. 
+\sergio{onde $B$ é o elemento estruturante que define a conectividade}. O procedimento termina quando $X_{k} = X_{k-1}$. \sergio{Nesse momento pode-se extrair o componente de A ou rotular este. Este procedimento deve ser repetido para um novo pixel de objeto não rotulado, até que todos os componentes conectados sejam extraídos ou rotulados.} 
 
 \subsection{Método de Otsu}
 
-Segundo \cite{Gonzales2010}, o método é ótimo no sentido de maximizar a variação entre classes, uma medida bem conhecida usada na análise estatística discriminante. A idéia básica é que as classes com limiares apropriados devem ser distintas com respeito aos valores de intensidade de seus pixels e, inversamente, que um limite que ofereça a melhor separação entre as classes em termos de seus valores de intensidade seja o melhor (ótimo) limite. Além de sua otimização, o método de Otsu tem a propriedade importante de que ele se baseia inteiramente em cálculos realizados no histograma de uma imagem, uma matriz 1-D facilmente obtida.
+Segundo \cite{Gonzales2010}, o método de Otsu é ótimo no sentido de maximizar a variação entre classes, uma medida bem conhecida usada na análise estatística discriminante. \sergio{A ideia básica é separar os pixels em duas classes por um limiar apropriado, de a varianção de intensidade entre as classes seja máxima e a variação de intensidade dentro de cada classe seja mínima}. O método de Otsu tem a propriedade importante de que ele \sergio{pode} ser basear inteiramente no histograma de uma imagem \sergio{ $p_i$, que dá a probabilidade de ocorrência de cada nível de cinza $i$ da imagem.}
 
-Seja {0, 1, 2 ... L-1} denotar o conjunto de L níveis de intensidade inteira distintos em uma imagem digital de tamanho M$\times$N pixels, e seja $n_{i}$ o número de pixels com intensidade i.
-O número total, MN, de pixels na imagem é MN = $n_{0} + n_{1} + n_{2} + + n_{L-1}$. O histograma normalizado possui componentes $p_{i} = n_{i}$ / MN, dos quais se segue que
+Seja $$\{0, 1, 2, \ldots, L-1\}$ o conjunto de $L$ níveis de intensidade distintos em uma imagem digital de tamanho $M\times N$ pixels, e seja $n_{i}$ o número de pixels com intensidade $i$. O número total $MN$ de pixels na imagem é $MN = n_{0} + n_{1} + n_{2} + + n_{L-1}$. A probabilidade de ocorrência de cada pixel, também chamada de histograma normalizado, é dada  por $p_{i} = n_{i} / MN$, dos quais tem-se que:
 \begin{equation}
     \sum_{i=0}^{L-1} p_{i}=1 \qquad \qquad p_{i}\geq 0
 \end{equation}

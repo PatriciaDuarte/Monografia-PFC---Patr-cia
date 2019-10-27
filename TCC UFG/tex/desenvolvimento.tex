@@ -1,0 +1,115 @@
+
+\section{Base de dados de imagens}
+
+Foram coletas imagens de plantações de jabuticabeiras e de coqueiros, utilizando a API Python do Google Maps. A API do Google Maps permite obter imagens de satélite do Google Maps, informando como entrada as coordenadas de latitude de longitude e um parâmetro de \textit{zoom}. A API também possui constantes internas que permite definir a dimensão (linhas \versus colunas) da imagem desejada a partir do ponto de latitude e longitude especificado. Pela API o nível de zoom varia no intervalo de 0 -- 23, sendo 23 o maior nível de \textit{zoom}. Coletamos imagens com nível de \texit{zoom} 18. Todas as imagens de satélite obtidas foram captadas pelo satélite Airbus/CNES em 2019. A nossa base de dados é formada por imagens das seguintes localidades/plantações:
+
+\begin{description}
+\item[Fazenda Jabuticabal / plantação de jabuticabeiras]: A Fazenda Jaboticabal é localizada na GO-319, Hidrolândia -- GO, latitude: -16.911523, longitude: -49.360602 (16°54'41.5"Sul, 49°21'38.2" Oeste).
+
+\item[Fazenda em Porto Seguro / plantação de coqueiros]: A Fazenda de plantação de coqueiros da Bahia no município de Porto Seguro -- , latitude: -16.378640, longitude: -39.089385 (16°22'43.1" Sul, 39°05'21.8"" Oeste).
+
+\end{description}
+
+
+\section{Metodologia inicial}
+
+Nesta seção descrevemos as duas metodologias usadas para a contagem de plantas. Conforme mencionado anteriormente as metodologias compartilham de uma fase inicial de processamento comum e se diferem no método de identificação de árvores. Após a identificação as árvores são rotuladas. A Figura~\ref{fig:metodologia} ilustra as metodologias desenvolvidas e comparadas. Inicialmente é feito uma conversão para níveis de cinza. Em seguida é aplicado o método de Otsu para binarização, com o intuito de separar pixels de plantas de outras classes de pixels. Com o objetivo de preencher buracos nas copas das plantas e eliminar fendas estreitas entre plantas é aplicado um processamento morfológico. Posteriormente é aplicada a transformada da distância com o intuito de dar valores mais altos no centro da copa das plantas e valores mais baixos à medida que se distância do centro da copa da árvore; este é um processamento padrão em vários algoritmos de identificação de objetos. O processamento até este momento é comum à ambas as metodologias. Tomando como entrada a imagem produzida pela transformada da distância, foi aplicado dois métodos para a detecção de plantas: segmentação \textit{watershed} e detecção de picos pela filtragem máxima local. Em seguida as árvores detectadas são rotuladas, sendo o número de rótulos atribuídos igual ao número estimado de árvores.  
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{images/metodologia_pat.pdf}
+\caption{Passos das metodologias propostas para a contagem de árvores.}
+\label{fig:metodologia}
+\end{figure}
+
+
+\subsection{Conversão para níveis de cinza}
+
+Para a conversão das imagens para níveis de cinza usamos a medida de luminância~\CITE{Gonzalez2006} que a projetada para casar a percepção humana de brilho, devido a proporção de células sensíveis a cada uma das cores primárias RGB. Assim, é usada combinação ponderada dos canais RGB:
+
+\begin{equation}
+\text{Luminância} = 0.2989*R + 0.5870 + 0.1140*B
+\end{equation} 
+
+Este cálculo de luminância é o padrão adotado por boa parte das bibliotecas de processamento de imagens para a conversar de imagens coloridas para imagens em níveis de cinza.
+
+
+\subsection{Binarização}
+
+Após as imagens serem convertidas do sistema de cores RGB  para níveis de cinza, elas foram binarizadas pelo método de Otsu. A ideia do método de Otsu é encontrar o limiar que minimiza a variância ponderada dentro das classes. Ou seja, separa os pixels em dois grupos cuja variância de nível de cinza é a menor possível. Basicamente isto pode ser feito por encontrar o limiar $t$ que minimiza a Equação~\ref{eq:otsu}, onde $p_1(t)$ é a probabilidade de um pixel menor ou igual a $t$, $p_2(t)$ é a probabilidade de um pixel maior que $t$, $\sigma_1^2(t)$ é a variância da classe de pixels menor ou igual a $t$, e $\sigma_2^2(t)$ é a variância da classe de pixels maior que $t$.
+
+\begin{equation}
+\sigma_2(t) = p_1(t)\sigma_1^2(t) + p_2(t)\sigma_2^2(t)
+\label{eq:otsu}
+\end{equation}
+
+\subsection{Tratamento morfológico}
+Devido a presença de ruídos que não correspondem a plantas na imagem binarizada, aplicamos duas operações para tratamento morfológico. Primeiro foi aplicado uma operação de preenchecimento de buracos e em seguida foi aplicada uma operação de abertura. 
+
+A abertura, denotada por $A \circ B$, consiste de uma operação de erosão seguida de uma operação de dilatação, usando o mesmo elemento estruturante $B$.  Esta operação elimina pequenos objetos indesejáveis ou pontes estreitas entre objetos, sem que os objetos não eliminados mudem de tamanho radicalmente. Nos experimentos usamos como elemento estruturante um círculo de raio 2.
+
+\subsection{Transformada da distância}
+
+A transformada da distância~\cite{Fabbri2008} mede a distância de cada ponto do objeto até a borda mais próxima. Seja uma imagem bidimensional $I$ consistindo de duas classes de pixels: pixels de objeto (de valor 1) e pixels de não objeto (de valor 0).  Basicamente a transformada de distância atribui a cada pixel de objeto de uma imagem binária, a distância deste pixel para o pixel de borda mais próximo. Matematicamente:
+
+\begin{equation}
+I_d(x,y)=
+\begin{cases}
+0, & \text{se } I (x,y)=0\\
+min(||x-x_0, y-y_0||, \forall I(x_0, y_0)=0), & \text{se } I(x,y)=0
+\end{cases}
+\end{equation} 
+
+
+
+\subsection{Segmentação Watershed}
+
+O termo \textit{watershed} se refere à linha de divisória entre bacias hidrográficas. Uma bacia hidrográfica é a área geográfica que drena para um rio ou reservatório específico. Assim transformação da bacia hidrográfica requer que você pense em uma imagem como uma superfície. Você deve imaginar que as áreas claras são altas e as áreas escuras são baixas. Com superfícies, é natural pensar em termos de bacias de captação e linha divisórias entre estas. O algoritmo de segmentação \textit{watershed}~\cite{Gonzalez2006} parte do cálculo de cada mínimo regional de imagem. Em seguida a imagem (superfície) é inundada de baixo para cima gradualmente. Quando a elevação da água em bacias de captação distintas está prestes a se fundir, uma barragem é construída para evitar a fusão. O processo de inundação gradual das bacias de captação é feito por meio de dilatação morfológica. Quando as coordenadas de bacias de captação distintas de encontram é construído uma barreira, normalmente por setar um mais alto que o nível de cinza máximo da imagem, nas coordenas em questão.
+
+\subsection{Filtragem máxima local}
+
+A ideia por trás dos filtros máximos locais~\cite{WULDER2000} para a detecção de copas das árvores é que as copas das árvores, estando mais próximas da fonte de iluminação tem maior refletância. Sob essa suposição, identificar uma copa de árvore se traduz em encontrar, geralmente através de uma janela deslizante, os máximos locais na imagem. Uma das principais questões é que as detecções são muito afetadas pelo tamanho da janela deslizante. Uma janela que é muito grande em comparação com a copa de uma árvore falha ao detectar diferentes copas das árvores, resultando na mesclagem de copas diferentes. Por outro lado, uma janela muito pequena criará muitos falsos positivos, identificando vários pixels brilhantes que pertencem à mesma coroa. Uma seleção cuidadosa do tamanho da janela deslizante é, portanto, fundamental. As coroas das árvores estão longe da forma geométrica precisa. Isso significa que, muitas vezes, devido à topologia das árvores, pixels de alta intensidade podem ocorrer fora da parte mais alta da coroa. Como neste trabalho aplicamos a transformada da distância sob a imagem binarizada, o problema de múltiplos máximos locais em uma mesma copa de árvore tende a ser reduzido.
+
+\subsection{Rotulação}
+
+Por fim é feito uma rotulação de componente conectados, onde é atribuído um rótulo distinto para cada região 8-conectada.  Seja $p$ e $q$ pertencente a objeto $S$. Então $p$ é conectado à $q$ se existe um caminho de $p$ para $q$ consistindo inteiramente de pixels pertencentes à $S$. Para qualquer $p \in S$, o conjunto de pixels em $S$ que são conectados à $p$ é chamado de um componente conectado de $S$. Um caminho (\textit{path}) do pixel $p$ em $(x,y)$ para o pixel $q$ em $(s,t)$ é uma sequência de pixels distintos: $(x_0,y_0), (x_1,y_1), (x_2,y_2),\ldots, (x_n,y_n)$
+tal que	$(x_0,y_0) = (x,y)$ e $(x_n,y_n) = (s,t)$
+e $(x_i,y_i)$ é adjacente à $(x_{i-1},y_{i-1})$,      $i = 1, \ldots,n$. Neste trabalho consideramos a adjacência de 8, que considere que todos os pixels vizinhos na vertical, horizontal e diagonais são adjacentes. 
+   
+
+\section{Resultados}
+\label{sec:results}
+
+Os imagens de satélite usadas, baixas através da API do Google Maps são mostradas na Figuras\ref{fig:coco} e \ref{fig:jabuticaba} onde a primeira se refere a uma plantação de cocos e segunda a uma plantação de jabuticabas, obtidas conforme descrito na Seção~\ref{sec:matmet}. Após a obtenção das imagens de satélite, separamos manualmente o talhão refente ao plantio em questão e contamos visualmente a quantidade de plantas. Em seguida aplicamos as duas metodologias às imagens e mensuramos a quantidade de plantas detectadas e a taxa de erro na detecção. A Tabela~\ref{tab:results} mostra o número de plantas para cada imagem, o número de plantas contadas por cada metodologia de a taxa de erro na contagem de plantas. Pode-se observar que a metologia que usa a filtragem máxima local é mais precisa com 92.03 de precisão para imagens de jabuticabeiras, versus 83.94 de precisão da abordagem baseada em \textit{watershed}. Para a contagem de coqueiros a metologia baseada em filtragem máxima local foi mais precisa com 92.88\% de precisão versus 87.91\% de \textit{watershed}. Apesar da filtragem máxima local prover resultados de contagem de plantas mais precisos, este método não delimita a copa das árvores, o que seria inapropriado caso o usuário queira estimar valores como taxa de cobertura do solo, uniformidade das plantas, etc. Por outro lado, \textit{watershed} provê a segmentação das copas das árvores, porém a precisão na contagem foi significativamente inferior a da filtragem máxima local.     
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{images/coco.png}
+\caption{Imagem de satélite de uma plantação de coqueiros na Bahia.}
+\label{fig:coco}
+\end{figure}
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{images/jabuticaba.png}
+\caption{Imagem de satélite de uma plantação de jabuticabeiras em Hidrolândia, Goiás.}
+\label{fig:jabuticaba}
+\end{figure}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{ |l|l|l|l|l|l| } 
+\hline
+\multirow{2}{4em}{Espécie} & \multicolumn{3}{|c|}{Quantidade de plantas} & \multicolumn{2}{|c|}{Taxa de acerto}\\
+ & manual & LM & watershed & LM & watershed\\ 
+\hline
+Jabuticabeiras	& 1569	& 1444	& 1821	& 92.03\%	& 83.94\%\\
+\hline
+coqueiros &	1489 & 1383	& 1669	& 92.88\% &	87.91\%\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Resultados de contagem de plantas de jabuticabeira e coqueiros manual e dadas metodologias desenvolvidas.}
+\label{tab:results}
+\end{table}

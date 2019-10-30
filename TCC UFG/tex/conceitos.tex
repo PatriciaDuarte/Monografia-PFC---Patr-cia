@@ -57,6 +57,8 @@ $\textbf{Combinação 2:}$
 
 \subsection{Morfologia Matemática para imagens binárias}
 
+\sergio{PATRICIA, VOLTE NESSA SEÇÃO. SUAS ILUSTRAÇÕES DE MORFOLOGIA ESTÃO ERRADAS. ELAS DEVEM SER FEITAS COM IMAGENS BINÁRIAS - PRETO E BRANCO. NO MOMENTO DE APLICAR O OBJETO (PLANTA) DEVE ESTAR EM BRANCO E O FUNDO PRETO}
+
 Na área de Biologia a palavra `morfologia' geralmente lida com a forma e a estrutura de animais e plantas. Em processamento de imagens, morfologia matemática constitui ferramentas para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A base para a descrição das operações morfológicas é a  teoria dos conjuntos. Este trabalho, descreve os conceitos básicos de morfologia matemática para imagens tomando como base o livro de \citeonline{Gonzales2010}.
 
 Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto na imagem. 
@@ -69,13 +71,13 @@ Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominu
      A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
      \label{eq:erosao}
 \end{equation}
-onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{Dizer o que a EROSÃO FAZ NA PRÁTICA}
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{DIZER O QUE A EROSÃO FAZ NA PRÁTICA}
 
 %IMAGEM EROSÃO
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de erosão}
-\includegraphics[width=7cm, height=7cm]{images/erosao.png}
+%\includegraphics[width=7cm, height=7cm]{images/erosao.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -87,13 +89,13 @@ Novamente sendo $A$ e $B$ conjuntos em $Z^{2}$, a dilatação de $A$ por $B$, de
     A \oplus B = \left \{ Z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
 \end{equation}
 sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$.
-\sergio{DIZER O QUE A EROSÃO FAZ NA PRÁTICA}
+\sergio{DIZER O QUE A DILATAÇÃO FAZ NA PRÁTICA}
 
 %FIGURA DILATAÇÃO
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de dilatação}
-\includegraphics[width=7cm, height=7cm]{images/dilatacao.png}
+%\includegraphics[width=7cm, height=7cm]{images/dilatacao.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -114,7 +116,7 @@ A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreito
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de abertura}
-\includegraphics[width=6cm, height=6cm]{images/abertura.png}
+%\includegraphics[width=6cm, height=6cm]{images/abertura.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -132,7 +134,7 @@ O fechamento tende a suavizar seções de contornos, mas, ao contrário da abert
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de fechamento}
-\includegraphics[width=7cm, height=7cm]{images/fechamento.png}
+%\includegraphics[width=7cm, height=7cm]{images/fechamento.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}

@@ -69,7 +69,7 @@ Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominu
      A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
      \label{eq:erosao}
 \end{equation}
-onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{FAZER EXEMPLO DE EROSÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{Dizer o que a EROSÃO FAZ NA PRÁTICA}
 
 %IMAGEM EROSÃO
 \begin{figure}[ht]
@@ -87,7 +87,7 @@ Novamente sendo $A$ e $B$ conjuntos em $Z^{2}$, a dilatação de $A$ por $B$, de
     A \oplus B = \left \{ Z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
 \end{equation}
 sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$.
-\sergio{FAZER EXEMPLO DE DILATAÇÃO E DIZER O QUE ELA FAZ NA PRÁTICA}
+\sergio{DIZER O QUE A EROSÃO FAZ NA PRÁTICA}
 
 %FIGURA DILATAÇÃO
 \begin{figure}[ht]
@@ -109,7 +109,6 @@ A abertura do conjunto $A$ pelo elemento estruturante $B$, indicado por $A \circ
 
 Assim, a abertura $A$ por $B$ é a erosão de $A$ por $B$, seguida de uma dilatação do resultado por $B$. 
 A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreitos e elimina saliências finas.
-\sergio{FAZER EXEMPLO DE ABERTURA PARA ILUSTRAR}
 
 %FIGURA ABERTURA
 \begin{figure}[ht]
@@ -127,7 +126,7 @@ O fechamento do conjunto $A$ pelo elemento estruturante $B$, denominado $A \bull
     A \bullet  B = \left ( A \oplus  B \right )\ominus  B
 \end{equation}
 ou seja, o fechamento de $A$ por $B$ é dado pela dilatação de $A$ por $B$, seguido pela erosão do resultado por $B$. 
-O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno. \sergio{FAZER EXEMPLO DE FECHAMENTO PARA ILUSTRAR}
+O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno. 
 
 %FIGURA FECHAMENTO
 \begin{figure}[ht]
@@ -159,158 +158,106 @@ Fonte: Elaborada pela autora
 
 \subsection{Método de Otsu}
 
-Segundo \cite{Gonzales2010}, o método de Otsu é ótimo no sentido de maximizar a variação entre classes, uma medida bem conhecida usada na análise estatística discriminante. \sergio{A ideia básica é separar os pixels em duas classes por um limiar apropriado, de a variação de intensidade entre as classes seja máxima e a variação de intensidade dentro de cada classe seja mínima}. O método de Otsu tem a propriedade importante de que ele \sergio{pode} ser basear inteiramente no histograma de uma imagem \sergio{ $p_i$, que dá a probabilidade de ocorrência de cada nível de cinza $i$ da imagem.}
+Segundo \cite{Gonzales2010}, o método de Otsu é ótimo no sentido de maximizar a variância entre classes. \sergio{A ideia básica é separar os pixels em duas classes por um limiar apropriado, onde a variação de intensidade entre as classes seja máxima e a variação de intensidade dentro de cada classe seja mínima}. O método de Otsu tem a propriedade importante de \sergio{poder} se basear inteiramente no histograma normalizado \sergio{ $p_i$, que dá a probabilidade de ocorrência de cada nível de cinza $i$ da imagem.}
 
-Seja $$\{0, 1, 2, \ldots, L-1\}$ o conjunto de $L$ níveis de intensidade distintos em uma imagem digital de tamanho $M\times N$ pixels, e seja $n_{i}$ o número de pixels com intensidade $i$. O número total $MN$ de pixels na imagem é $MN = n_{0} + n_{1} + n_{2} + + n_{L-1}$. A probabilidade de ocorrência de cada pixel, também chamada de histograma normalizado, é dada  por $p_{i} = n_{i} / MN$, dos quais tem-se que:
+Seja $\{0, 1, 2, \ldots, L-1\}$ o conjunto de $L$ níveis de intensidade distintos em uma imagem digital de tamanho $M\times N$ pixels, e seja $n_{i}$ o número de pixels com intensidade $i$. O número total $MN$ de pixels na imagem é $MN = n_{0} + n_{1} + n_{2} + + n_{L-1}$. A probabilidade de ocorrência de cada pixel, também chamada de histograma normalizado, é dada  por $p_{i} = n_{i} / MN$, dos quais tem-se que:
 \begin{equation}
     \sum_{i=0}^{L-1} p_{i}=1 \qquad \qquad p_{i}\geq 0
 \end{equation}
 
-Agora, suponha que selecionamos um limite T(k) = k, 0 < k < L-1, e use-o para limitar a imagem de entrada em duas classes, $c_{1}$ e $c_{2}$, onde $c_{1}$ consiste em todos os pixels na imagem com valores de intensidade no intervalo [0,k] e $c_{2}$ consiste em pixels com valores no intervalo $[k+1, L-1]$. Usando esse limite, a probabilidade, $P_{1}(k)$, de que um pixel é atribuído à classe $c_{1}$ (ou seja, com limite para) é dada pela soma cumulativa
+Agora, suponha selecionar um limite $T(k) = k, 0 < k < L-1$, e usá-lo para separar os pixels da imagem de entrada em duas classes, $c_{1}$ e $c_{2}$, onde $c_{1}$ consiste em todos os pixels na imagem com valores de intensidade no intervalo $[0,k]$ e $c_{2}$ consiste em pixels com valores no intervalo $[k+1, L-1]$. Usando \sergio{essa limiarização}, a probabilidade, $P_{1}(k)$, de que um pixel ser atribuído à classe $c_{1}$ é dada pela soma cumulativa:
 \begin{equation}
-    p_{1}(k) = \sum_{i=0}^{k} p_{i}
+    q_{1}(k) = \sum_{i=0}^{k} p_{i}
 \end{equation}
 
-Visto de outra maneira, essa é a probabilidade da classe $c_{1}$ ocorrer. Por exemplo, se definirmos k=0, a probabilidade da classe $c_{1}$ ter pixels atribuídos a ela é zero. Da mesma forma, a probabilidade de ocorrência da classe $c_{2}$ é
+Visto de outra maneira, $q_{1}(k)$ é a probabilidade da classe $c_{1}$ ocorrer. Da mesma forma, a probabilidade de ocorrência da classe $c_{2}$ é
 \begin{equation}
-    p_{2}(k) = \sum_{i=k+1}^{L-1} p_{i} = 1- p_{1}(k)
+    q_{2}(k) = \sum_{i=k+1}^{L-1} p_{i} = 1- p_{1}(k)
 \end{equation}
 
-O valor médio da intensidade dos pixels em $c_{1}$ é
+O valor médio da intensidade dos pixels em $c_{1}$ é:
 \begin{equation}
     \begin{split}
-    m_{1}(k) = \sum_{i=0}^{k}iP(i/c_{1}) = \sum_{i=0}^{k} iP(c_{1}/i)P(i)/P(c_{1}) \\
-    = \frac{1}{P_{1}(k)}\sum_{i=0}^{k} ip_{i}
+    m_{1}(k) = \sum_{i=0}^{k} \frac{ip_{i}}{q_1(k)}
     \end{split}
 \end{equation}
 
-onde $P_{1}$(k) é dado pela Eq.(2.16). O termo P(i/$c_{1}$) na Eq. (2.18) é a probabilidade do valor de intensidade i, dado que i provém da classe $c_{1}$. O termo mais à direita na primeira linha da equação segue da fórmula de Bayes:
-\begin{equation}
-P(A/B) = P(B/A)P(A)/P(B)    
-\end{equation}
-
-A segunda linha decorre do fato de que P($c_{1}$/i), a probabilidade de $c_{1}$ dado i, é 1 porque estamos lidando apenas com valores de i da classe $c_{1}$. Além disso, P(i) é a probabilidade do i-ésimo valor, que é o i-ésimo componente do histograma, $p_{i}$. Finalmente, P($c_{1}$) é a probabilidade da classe $c_{1}$ que, da Eq.(2.16), é igual a $P_{1}$(k).
-Da mesma forma, o valor médio da intensidade dos pixels atribuídos à classe $c_{2}$ é
+Da mesma forma, o valor médio da intensidade dos pixels atribuídos à classe $c_{2}$ é: 
 \begin{equation}
     \begin{split}
-        m_{2}(k) = \sum_{i=k+1}^{L-1}iP(i/c_{2}) \\
-        = \frac{1}{P_{2}(k)} \sum_{i=k+1}^{L-1} i p_{i}
+        m_{2}(k) = \sum_{i=k+1}^{L-1} \frac{ip_{i}}{q_2(k)}
     \end{split}
 \end{equation}
 
-A média acumulada(intensidade média) até o nível k é dada por
-\begin{equation}
-    m(k) = \sum_{i=0}^{k} i p_{i}
-\end{equation}
-
-e a intensidade média de toda a imagem (ou seja, a média global) é dada por
-\begin{equation}
-    m_{G} = \sum_{i=0}^{L-1} ip_{i}
-\end{equation}
-
-A validade das duas equações a seguir pode ser verificada por substituição direta dos resultados anteriores:
-\begin{equation}
-    P_{1}m_{1} + P_{2}m_{2} = m_{G}
-\end{equation}
-
-e
-\begin{equation}
-    P_{1} + P_{2} = 1
-\end{equation}
-
-onde omitimos os ks temporariamente em favor da clareza notacional.
-
-Para avaliar a eficácia do limiar no nível k, é usada a medida normalizada, sem dimensão
-\begin{equation}
-    \eta  = \frac{\sigma _{B}^{2}}{\sigma_{G}^{2}}
-\end{equation}
-
-onde $\sigma_{G}^{2}$ é a variação global, ou seja, a variação de intensidade de todos os pixels da imagem,
-\begin{equation}
-\sigma_{G}^{2} = \sum_{i=0}^{L-1}(i - m_{G})^{2} p_{i}    
-\end{equation}
-
-e $\sigma_{B}^{2}$ é a variação entre classes, definida como
-\begin{equation}
-    \sigma_{B}^{2} = P_{1}(m_{1} - m_{G})^{2} + P_{2}(m_{2} -m_{G})^{2}
-\end{equation}
-
-Essa expressão também pode ser escrita como
-\begin{equation}
-    \begin{split}
-             \sigma_{B}^{2} = P_{1}P_{2}(m_{1} - m_{2})^{2} \\
-            = \frac{(m_{G}P_{1} - m)^{2}}{P_{1}(1-P_{1})}
-    \end{split}
-\end{equation}
-
-A primeira linha desta equação segue das Equações(2.23), (2.24) e (2.27). A segunda linha segue das Equações (2.17) a (2.22). Essa forma é um pouco mais eficiente computacionalmente porque a média global, $m_{G}$, é calculada apenas uma vez; portanto, apenas dois parâmetros, $m_{1}$ e $P_{1}$, precisam ser computados para qualquer valor de k.
-A primeira linha na Equação(2.28) indica que quanto mais as duas médias $m_{1}$ e $m_{2}$ estiverem uma da outra, maior $\sigma_{B}^{2}$  será, implicando que a variação entre classes é uma medida de separabilidade entre classes. Como $\sigma_{G}^{2}$ é uma constante, segue-se que $\eta$ também é uma medida de separabilidade, e maximizar essa métrica é equivalente a maximizar $\sigma_{B}^{2}$. O objetivo, então, é determinar o valor do limite, k, que maximize a variação entre as classes, conforme declarado anteriormente. Observe que a Equação (2.25) assume implicitamente que $\sigma_{G}^{2}$ > 0. Essa variação pode ser zero somente quando todos os níveis de intensidade da imagem forem
-o mesmo, o que implica a existência de apenas uma classe de pixels. Por sua vez, isso significa que $\eta$ = 0 para uma imagem constante porque a separabilidade de uma única classe de si mesma é zero.
-
-Reintroduzindo k, temos os resultados finais:
-\begin{equation}
-    \eta(k) = \frac{\sigma_{B}^{2}(k)}{\sigma_{G}^{2}}
-\end{equation}
-
-e
+\sergio{A variância dentro da classe $c_1$, em que os valores de pixels vão de $[0,k]$ é dada por:}
 
 \begin{equation}
-    \sigma_{B}^{2}(k) = \frac{[m_   {G}P_{1}(k) - m(k)]^2}{P_{1}(k)[1-P_{1}(k)]}
+    \sigma^2_1(k) =  \sum_{i=0}^{k}[i-m_1(k)] \frac{p_i}{q_1(k)} 
 \end{equation}
 
-Então, o limite ideal é o valor, k*, que maximiza $\sigma_{B}^{2}$ (k):
+\sergio{De forma similar, a variância dentro da classe $c_2$, em que os valores de pixels vão de $[k+1,L-1]$ é dada por:}
+
 \begin{equation}
-    \sigma_{B}^{2}(k^{*}) = _{0\leq k \leq L-1}^{max \ \sigma_{B}^{2}(k)}
+    \sigma^2_1(k) =  \sum_{i=k+1}^{L-1}[i-m_2(k)] \frac{p_i}{q_2(k)} 
 \end{equation}
 
-Para encontrar $k^{*}$, simplesmente avaliamos essa equação para todos os valores inteiros de k (sujeito à condição 0<$P_{1}$(k)<1) e selecionamos o valor de k que produziu o máximo de $\sigma_{B}^{2}$(k).
-Se o máximo existe para mais de um valor de k, é habitual calcular a média dos vários valores de k para os quais $\sigma_{B}^{2}$(k) é máximo.  Avaliando as Equações (2.30) e (2.31) para todos os valores de k é um procedimento computacional relativamente barato, porque o número máximo de valores inteiros que k pode ter é L, que é apenas 256 para imagens de 8 bits.
+\sergio{Para encontrar o melhor valor de $k$, denominado de $k^{*}$, simplesmente avaliamos a Equação~\ref{eq:var_inter} para todos os valores inteiros de $k, 0 < k < L-1$ e tomamos o valor de $k$ que produz o maior valor de variância inter classe $\sigma^2(k)$; 
 
-Uma vez obtido $k^{*}$, a imagem de entrada f(x, y) é segmentada como antes:
+\begin{equation}
+     \argmax_k \sigma^2(k) = q_1(k)\sigma^2_1(k) + q_2(k)\sigma^2_2(k)
+     \label{eq:var_inter}
+\end{equation}
+
+}
+
+%(sujeito à condição 0<$P_{1}$(k)<1) e selecionamos o valor de k que produziu o máximo de $\sigma_{B}^{2}$(k).
+Se o máximo existe \sergio{em} mais de um valor de $k$, é habitual calcular a média dos vários valores de $k$ para os quais $\sigma^{2}$ é máximo.  
+
+Uma vez obtido $k^{*}$, a imagem de entrada $f(x, y)$ é limiarizada:
 \begin{equation}
       g(x,y) = \left \{  \begin{array}{cc}
         1  & if \ f(x,y) > k^{*}\\
         1  & if \ f(x,y) \leq  k^{*} \\
     \end{array} \right \}
 \end{equation}
-
-para x = 0,1,2,...,M-1 e y = 0,1,2,...,N-1. Observe que todas as quantidades necessárias para avaliar a Equação(2.30) são obtidos usando apenas o histograma de f(x,y). Além do limite ideal, outras informações sobre a imagem segmentada podem ser extraídas do histograma. Por exemplo, $P_{1}$ ($k^{*}$) e $P_{2}$ ($k^{*}$), as probabilidades da classe avaliadas no limite ideal, indicam as partes das áreas ocupadas pelas classes (grupos de pixels) na imagem em limiar. Da mesma forma, as médias $m_{1} (k^{*})$ e $m_{2} (k^{*})$ são estimativas da intensidade média das classes na imagem original.
-
-Em geral, a medida na Equação(2.29) tem valores na faixa
-\begin{equation}
-    0 \leq \eta(k) \leq  1
-\end{equation}
-
-para valores de k no intervalo [0, L-1]. Quando avaliada no limiar ideal $k^{*}$, essa medida é uma estimativa quantitativa da separabilidade de classes, o que, por sua vez, nos dá uma idéia da precisão de limiar uma determinada imagem com $k^{*}$. O limite inferior na Equação(2.33) é atingível apenas por imagens com um nível de intensidade único e constante. O limite superior é atingível apenas por imagens de dois valores com intensidades
-igual a 0 e L-1.
+para $x = 0,1,2,\ldots,M-1$ e $y = 0,1,2,\ldots,N-1$. Observe que todas as quantidades necessárias para avaliar a \sergio{Equação~\ref{eq:var_inter} são obtidas} usando apenas o histograma de $f(x,y)$. Além do limiar ideal, outras informações sobre a imagem segmentada podem ser extraídas do histograma. Por exemplo, $p_{1}$ ($k^{*}$) e $p_{2}$ ($k^{*}$), indicam as probabilidades de cada classe conforme o limiar $k^*$a. Da mesma forma, as médias $m_{1} (k^{*})$ e $m_{2} (k^{*})$ são estimativas da intensidade média das classes na imagem original.
 
 
 \subsection{Transformada de Distância}
-Foi mostrado por \citeonline{Maurer2003}, a métrica de distância $L_{p}$
+
+\sergio{ESSA PARTE NÃO ESTÁ LEGAL POIS VOCÊ NÃO FALA DA TRANSFORMADA DE DISTÂNCIA EM SI. ESTOU INSERINDO O QUE TINHA ESCRITO NO ARTIGO, MAS TALVEZ SEJA BOM PEGAR OUTRA MATERIAL}
+
+\sergio{A transformada da distância~\cite{Fabbri2008} mede a distância de cada ponto de objeto até a borda mais próxima. Seja uma imagem bidimensional $I$ consistindo de duas classes de pixels: pixels de objeto (de valor 1) e pixels de não objeto (de valor 0).  Basicamente a transformada de distância gera uma matriz da mesma dimensão da imagem original binária, onde para cada pixel de objeto é atribuído a distância deste pixel para o pixel de borda mais próximo. Esta matriz, quando visualidade como uma imagem em níveis de cinza, produzirá valores mais claros para pixels no centro de um objeto e valores mais escuros para pixels perto das borda do objeto. Normalmente se utiliza uma métrica como distância.}
+
+
+Uma métrica bastante conhecida e usada em processamento de imagens denominada $L_{p}$ \cite{Maurer2003}, que é dada pela seguinte Equação:
 \begin{equation}
     \Delta (x,y) = \left ( \sum_{i=1}^{k}\mid x_{i} - y_{i} \mid ^p \right )\tfrac{1}{p} \ \ ,
 \end{equation}
+onde $x$ e $y$ são $k$-tuplas, $x_{i}$ e $y_{i}$  são as $i$-ésimas coordenadas de $x$ e $y$, e $1 \leq p \leq \infty$. No caso de imagens bidimensionais o número de coordenadas $k$ é igual a 2. As métricas $L_{1}$, $L_{2}$ e $L_{\infty}$ são conhecidas como distâncias de Manhattan ou quarteirão, Euclidiana e de tabuleiro de xadrez. 
 
-onde x e y são k-tuplas, $x_{i}$ e $_{i}$  são as i-ésimas coordenadas de x e y, e 1 $\leq$ p $\leq \infty$ . As métricas $L_{1}$, $L_{2}$ e $L_{1}$ são conhecidas como distâncias de Manhattan ou quarteirão, Euclidiana e tabuleiro de xadrez. A seguinte métrica ponderada da distância $L_{p}$ é
-\begin{equation}
-      \Delta (x,y) = \left ( \sum_{i=1}^{k} \mid w_{i}(x_{i} - y_{i}) \mid ^p \right )\tfrac{1}{p} \ \ ,
-\end{equation}
+\sergio{Uma métrica} $\Delta$: $R^{k} \times R^{k} \rightarrow R$ satisfaz as seguintes propriedades:
 
-onde $w_{i}$ é o peso das i-ésimas coordenadas de x e y. As métricas de distância: $\Delta$: $R^{k} \times R^{k} \rightarrow R$  satisfazem as seguintes propriedades:
+$\textbf{Propriedade 1}$: \sergio{Positividade}\\  \indent \indent $\Delta (x,y) = 0 \ \  \text{se} \ \ x = y$
 
-$\textbf{Propriedade 1}$: Definitividade positiva; $\Delta (x,y) = 0 \ \  if \ f \ \ x = y$
+$\textbf{Propriedade 2}$: Simetria\\ 
+\indent \indent $\Delta(x,y) = \Delta(y,x) \ \text{para quaisquer} \ x \ \text{e} \ y $
 
-$\textbf{Propriedade 2}$: Simetria; $\Delta(x,y) = \Delta(y,x) \ for \ any \ x \ and \ y $
+$\textbf{Propriedade 3}$: Desigualdade \sergio{triangular}\\
+\indent \indent $\Delta(x,z)\leq  \Delta(x,y) + \Delta(y,z) \ \text{para quaisquer} \ x , \ y, \ and \ z $
 
-$\textbf{Propriedade 3}$: Desigualdade de triângulo; $\Delta(x,z)\leq  \Delta(x,y) + \Delta(y,z) \ for \ any \ x , \ y, \ and \ z $
+$\textbf{Propriedade 4}$: Monotonicidade\\ 
+\indent \indent Seja $x$ e $y$ duas $k$-tuplas que diferem apenas nos valores das $d$-ésimas coordenadas (ou seja, $x_{i}$ = $y_{i}$, $i \neq d$). Para concretude, assuma que $x_{d}$ < $y_{d}$. Para qualquer $\textbf{u}$ e $\textbf{v}$ de tal forma que 1) $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v) e $\Delta$(y,v) < $\Delta$(y,$\textbf{u}$) ou 2) $\Delta$(x,$\textbf{u}$) < $\Delta$(x,v) e $\Delta$(y,v) $\leq$ $\Delta$(y,$\textbf{u}$) \sergio{tem-se que} $u_{d} < u_{d}$.
 
-$\textbf{Propriedade 4}$: Monotonicidade; Seja x e y duas k-tuplas que diferem apenas nos valores das coordenadas (ou seja, $x_{i}$ = $y_{i}$, i $\neq$ d). Para concretude, assuma que $x_{d}$ < $y_{d}$. Para qualquer $\textbf{u}$ e $\textbf{v}$ de tal forma que 1) $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v) e $\Delta$(y,v) < $\Delta$(y,$\textbf{u}$) ou 2) $\Delta$(x,$\textbf{u}$) < $\Delta$(x,v) e $\Delta$(y,v) $\leq$ $\Delta$(y,$\textbf{u}$) detém , $u_{d}$ < $u_{d}$
-
-$\textbf{Propriedade 5}$. Seja x e y duas k-tuplas que diferem apenas nos valores das coordenadas dth (ou seja, $x_{i}$ = $y_{i}$, i $\neq$ d). Seja $\textbf{u}$ e $\textbf{v}$ duas k-tuplas com valores idênticos das coordenadas dth (ou seja, $u_{d}$ = $v_{d}$. Se $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v), então $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(y,v).
-
+$\textbf{Propriedade 5}$\\
+\indent \indent Seja $\textbf{u}$ e $\textbf{v}$ duas $k$-tuplas com valores que diferem apenas nas  $d$-ésimas coordenadas (ou seja, $u_{d}$ = $v_{d}$. Seja $u$ e $v$ $k$-tuplas com valores idênticos da $d$-ésimas coordenas (isto é, $u_d = u_v$). Se \Delta(x,u) \leq \Delta(x, v), então $\Delta(y,u) \leq \Delta(y, v)$.
 
 \subsection{Watershed}
-Segundo \cite{Gonzales2010}, o conceito de Watershed(bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões, duas coordenadas espaciais versus intensidade. Nessa interpretação “topográfica”, consideramos três tipos de pontos: 1- Pontos pertencentes a um mínimo regional; 2- Pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um único mínimo; e 3- Pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2, é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
+Segundo \citeonline{Gonzales2010}, o conceito de \text{watershed} (bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões, duas coordenadas espaciais versus intensidade. Nessa interpretação ``topográfica'', consideramos três tipos de pontos: 1) pontos pertencentes a um mínimo regional; 2) pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um mínimo único; e 3) pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2 é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
+
+
+
+\sergio{PAREI AQUI! CONTINUO À NOITE}
 
 O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica. 
 Uma das principais aplicações, é a extração de objetos quase uniformes (semelhantes a bolhas) do fundo. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente. Assim, na prática, geralmente vemos a segmentação de bacias hidrográficas aplicada ao gradiente de uma imagem, e não a própria imagem. Nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.

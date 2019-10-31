@@ -57,8 +57,6 @@ $\textbf{Combinação 2:}$
 
 \subsection{Morfologia Matemática para imagens binárias}
 
-\sergio{PATRICIA, VOLTE NESSA SEÇÃO. SUAS ILUSTRAÇÕES DE MORFOLOGIA ESTÃO ERRADAS. ELAS DEVEM SER FEITAS COM IMAGENS BINÁRIAS - PRETO E BRANCO. NO MOMENTO DE APLICAR O OBJETO (PLANTA) DEVE ESTAR EM BRANCO E O FUNDO PRETO}
-
 Na área de Biologia a palavra `morfologia' geralmente lida com a forma e a estrutura de animais e plantas. Em processamento de imagens, morfologia matemática constitui ferramentas para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A base para a descrição das operações morfológicas é a  teoria dos conjuntos. Este trabalho, descreve os conceitos básicos de morfologia matemática para imagens tomando como base o livro de \citeonline{Gonzales2010}.
 
 Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto na imagem. 
@@ -71,13 +69,13 @@ Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominu
      A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
      \label{eq:erosao}
 \end{equation}
-onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. \sergio{DIZER O QUE A EROSÃO FAZ NA PRÁTICA}
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. Na pratica, a erosão elimina partes nas extremidades dos objetos, podendo servir ao propósito de separação de objeto conectados. Contudo ela diminui o tamanho dos objetos. 
 
 %IMAGEM EROSÃO
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de erosão}
-%\includegraphics[width=7cm, height=7cm]{images/erosao.png}
+\includegraphics[width=7cm, height=7cm]{images/erosao.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -88,14 +86,13 @@ Novamente sendo $A$ e $B$ conjuntos em $Z^{2}$, a dilatação de $A$ por $B$, de
 \begin{equation}
     A \oplus B = \left \{ Z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
 \end{equation}
-sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$.
-\sergio{DIZER O QUE A DILATAÇÃO FAZ NA PRÁTICA}
+sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$. Na prática a dilação expande as fronteiras dos objetos, podendo servir para ligar partes desconexas de um mesmo objeto. 
 
 %FIGURA DILATAÇÃO
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de dilatação}
-%\includegraphics[width=7cm, height=7cm]{images/dilatacao.png}
+\includegraphics[width=7cm, height=7cm]{images/dilatacao.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -116,7 +113,7 @@ A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreito
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de abertura}
-%\includegraphics[width=6cm, height=6cm]{images/abertura.png}
+\includegraphics[width=6cm, height=6cm]{images/abertura.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -134,7 +131,7 @@ O fechamento tende a suavizar seções de contornos, mas, ao contrário da abert
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de fechamento}
-%\includegraphics[width=7cm, height=7cm]{images/fechamento.png}
+\includegraphics[width=7cm, height=7cm]{images/fechamento.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -147,12 +144,14 @@ Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de u
     X_{k} = (X_{k-1} \oplus B) \cap I \qquad \qquad k = 1,2,3...
 \end{equation}
 onde $B$ é o elemento estruturante que define a conectividade. O procedimento termina quando $X_{k} = X_{k-1}$. Nesse momento pode-se extrair o componente de A ou rotular este. Este procedimento deve ser repetido para um novo pixel de objeto não rotulado, até que todos os componentes conectados sejam extraídos ou rotulados.
+\sergio{NÃO GOSTEI DESSA IMAGEM DE ROTULAÇÃO DE COMPONENTES CONECTADOS. AS COPAS DAS ÁRVORES FICARAM CONECTADAS.}
+
 
 %Exemplo de rotulação de componentes conectados:
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de Rotulação de Componentes conectados}
-\includegraphics[width=7cm, height=7cm]{images/rotulada.png}
+%\includegraphics[width=7cm, height=7cm]{images/rotulada.png}
 
 Fonte: Elaborada pela autora
 \label{fig:conceitos}
@@ -252,55 +251,54 @@ $\textbf{Propriedade 4}$: Monotonicidade\\
 \indent \indent Seja $x$ e $y$ duas $k$-tuplas que diferem apenas nos valores das $d$-ésimas coordenadas (ou seja, $x_{i}$ = $y_{i}$, $i \neq d$). Para concretude, assuma que $x_{d}$ < $y_{d}$. Para qualquer $\textbf{u}$ e $\textbf{v}$ de tal forma que 1) $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v) e $\Delta$(y,v) < $\Delta$(y,$\textbf{u}$) ou 2) $\Delta$(x,$\textbf{u}$) < $\Delta$(x,v) e $\Delta$(y,v) $\leq$ $\Delta$(y,$\textbf{u}$) \sergio{tem-se que} $u_{d} < u_{d}$.
 
 $\textbf{Propriedade 5}$\\
-\indent \indent Seja $\textbf{u}$ e $\textbf{v}$ duas $k$-tuplas com valores que diferem apenas nas  $d$-ésimas coordenadas (ou seja, $u_{d}$ = $v_{d}$. Seja $u$ e $v$ $k$-tuplas com valores idênticos da $d$-ésimas coordenas (isto é, $u_d = u_v$). Se \Delta(x,u) \leq \Delta(x, v), então $\Delta(y,u) \leq \Delta(y, v)$.
+\indent \indent Seja $\textbf{u}$ e $\textbf{v}$ duas $k$-tuplas com valores que diferem apenas nas  $d$-ésimas coordenadas (ou seja, $u_{d}$ = $v_{d}$. Seja $u$ e $v$ $k$-tuplas com valores idênticos da $d$-ésimas coordenas (isto é, $u_d = u_v$). Se \Delta(x,u) \leq \Delta(x, v), \text{então } $\Delta(y,u) \leq \Delta(y, v)$.
 
 \subsection{Watershed}
 Segundo \citeonline{Gonzales2010}, o conceito de \text{watershed} (bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões, duas coordenadas espaciais versus intensidade. Nessa interpretação ``topográfica'', consideramos três tipos de pontos: 1) pontos pertencentes a um mínimo regional; 2) pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um mínimo único; e 3) pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2 é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
 
 
+O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica.  \sergio{Uma das principais aplicações, é a extração de objetos quase uniformes (semelhantes a bolhas) do fundo [VAGO!! bolhas?]}. \sergio{Na prática, geralmente, a segmentação de bacias hidrográficas é aplicada ao gradiente de uma imagem, e não a própria imagem. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente}. Assim, nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.
 
-\sergio{PAREI AQUI! CONTINUO À NOITE}
+A construção da barragem do algoritmo de segmentação das bacias hidrográficas, é baseada em imagens binárias, que são membros do espaço 2-D de inteiro $Z^{2}$. A maneira mais simples de construir barragens que separam conjuntos de pontos binários, é usar a dilatação morfológica.
+Primeiramente, para a construção das barragens é aplicado a dilatação. Posteriormente, possui a etapa de inundação $n-1$, \sergio{se a água derrama de uma bacia para outra, uma barragem deve ser construída para impedir que isso aconteça}. \sergio{Seja $M_{1}$ e $M_{2}$  conjuntos de coordenadas} de pontos em dois mínimos regionais. \sergio{Seja $C_{n-1} (M_{1})$ e $C_{n-1} (M_{2})$ os conjuntos de coordenadas de pontos na bacia hidrográfica associado a esses dois mínimos no estágio $n-1$ da inundação}.
 
-O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica. 
-Uma das principais aplicações, é a extração de objetos quase uniformes (semelhantes a bolhas) do fundo. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente. Assim, na prática, geralmente vemos a segmentação de bacias hidrográficas aplicada ao gradiente de uma imagem, e não a própria imagem. Nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.
+Dois componentes conectados que se tornaram um único componente, indicam que a água entre as duas bacias hidrográficas, se fundiu na etapa de inundação $n$. \sergio{Esse componente é deixado de ser conectado se for indicado por $q$ [NÃO CONSIGO ENTENDER. QUEM É $q$ ??]}. 
 
-A construção da barragem do algoritmo de segmentação das bacias hidrográficas, é baseada em imagens binárias, que são membros do espaço 2-D do número inteiro $Z^{2}$. A maneira mais simples de construir barragens que separam conjuntos de pontos binários, é usar a dilatação morfológica.
-Primeiramente, para a construção das barragens é aplicado a dilatação. Posteriormente, possui a etapa de inundação n-1, a água derrama de uma bacia para outra, e uma represa deve ser construída para impedir que isso aconteça. $M_{1}$ e $M_{2}$ denotam os conjuntos de coordenadas de pontos em dois mínimos regionais. Em seguida, deixe o conjunto de coordenadas de pontos na bacia hidrográfica associado a esses dois mínimos no estágio n-1 da inundação, sendo denotados por $C_{n-1} (M_{1})$ e $C_{n-1} (M_{2})$.
+Suponha que cada um dos componentes conectados seja dilatado pelo elemento estruturador, sujeito a duas condições: 1) A dilatação deve ser restringida a $q$ (isso significa que o centro do elemento estruturador pode ser localizado apenas nos pontos em $q$ durante a dilatação); e 2) A dilatação não pode ser realizada em pontos que causariam a \sergio{dilatação [NAO SERIA união???]} dos conjuntos (isto é, se tornariam um único componente conectado). 
 
-Dois componentes conectados que se tornaram um único componente, indicam que a água entre as duas bacias hidrográficas, se fundiu na etapa de inundação n. Esse componente  é deixado de ser conectado se for indicado por q. 
-Suponha que cada um dos componentes conectados seja dilatado pelo elemento estruturador, sujeito a duas condições: 1- A dilatação deve ser restringida a q (isso significa que o centro do elemento estruturador pode ser localizado apenas nos pontos em q durante a dilatação); e 2- A dilatação não pode ser realizada em pontos que causariam a dilatação dos conjuntos (isto é, se tornariam um único componente conectado). 
-
-É evidente que os únicos pontos em q, que satisfazem as duas condições, descrevem o caminho conectado de um pixel de espessura hachurado. Esse caminho é a barragem de separação desejada no estágio n das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
+É evidente que os únicos pontos em $q$, que satisfazem as duas condições, descrevem o caminho conectado de um \sergio{pixel de espessura hachurado [OPS, PIXEL NÃO TEM ESPESSURA. HACHURADO? ONDE? IMAGINO QUE O LIVRO ESTARIA SE REFERINDO A UMA FIGURA QUE NÃO ESTÁ AQUI NO SEU TEXTO]}. Esse caminho é a barragem de separação desejada no estágio $n$ das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
 
 \subsection{Medidas de precisão dos resultados}
-Podemos quantificar o desempenho de um algoritmo de correspondência em um determinado limite, contando primeiro o número de correspondências verdadeiras e falsas, e falhas de correspondência, usando as seguintes definições:\cite{Szeliski2010}
+Conforme \citeonline {Szeliski2010}, pode-se quantificar o desempenho de um algoritmo \sergio{detecção de objetos contando}  o número de correspondências verdadeiras e falsas, e falhas de correspondência, usando as seguintes definições:
 
-\textbf{TP:} verdadeiros positivos, isto é, número de correspondências corretas;
+\textbf{TP:} verdadeiros positivos, isto é, \sergio{a quantidade de árvores que foram preditas como árvores};
 
-\textbf{FN:} falsos negativos, correspondências que não foram detectadas corretamente;
+\textbf{FN:} falsos negativos, \sergio{a quantidade de árvores que não foram detectadas};
 
-\textbf{FP:} falsos positivos, correspondências propostas incorretas;
+\textbf{FP:} falsos positivos, \sergio{a quantidade de objetos preditos como árvores que não são árvores};
 
-\textbf{TN:} negativos verdadeiros, não correspondências que foram corretamente rejeitadas.
+\textbf{TN:} negativos verdadeiros, {a quantidade de objetos que não são árvores, e que não foram identificados como tal}.
 
 
-Podemos converter esses números em taxas unitárias, definindo as seguintes quantidades:
+\sergio{Através das medidas elementares anteriores, pode-se compor várias medidas, tais como:}
 
-\textbf{TPR:} taxa positiva verdadeira,
+\noindent \sergio{\textbf{Taxa de verdadeiros positivos (\textit{true positive rate} -- TPR)}, também conhecida como sensitividade}:
 \begin{equation}
     TPR: \frac{TP}{TP + FN} = \frac{TP}{P};
 \end{equation}
+\sergio{mede a taxa dos exemplos positivos que foram preditos corretamentos, ou seja, a taxa de árvores que foram detectadas}\\
 
-\textbf{FPR:} taxa de falso positivos,
+\noindent \sergio{\textbf{Taxa de falso positivos (\textit{false positive rate} -- FPR)}, também conhecida como taxa de falso alarme:}
 \begin{equation}
     FPR: \frac{FP}{FP+TN} = \frac{FP}{N};
 \end{equation}
+\sergio{mede a taxa de objetos preditos erroneamente como árvores.}
 
-\textbf{PPV:}valor preditivo positivo,
+\noindent \sergio{\textbf{Valor preditivo positivo (\textit{positive predictive value} -- PPV):}},
 \begin{equation}
     PPV = \frac{TP}{TP+FP} = \frac{TP}{P'};
 \end{equation}
-
+mede a probabilidade 
 \textbf{ACC}: acurácia,
 \begin{equation}
     ACC = \frac{TP+TN}{P+N};

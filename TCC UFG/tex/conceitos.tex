@@ -244,7 +244,7 @@ Suponha que cada um dos componentes conectados seja dilatado pelo elemento estru
 
 É evidente que os únicos pontos em $q$, que satisfazem as duas condições, descrevem o caminho conectado de um pixel com hachuras cruzadas. Esse caminho é a barragem de separação desejada no estágio $n$ das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
 
-%FIGURA FECHAMENTO
+%FIGURA WATERSHED
 \begin{figure}[ht]
 \centering
 \caption{Exemplo de ilustração do Watershed}
@@ -255,8 +255,39 @@ Fonte: \citeonline{Gonzales2010}
 \end{figure}
 
 \subsection{Filtragem máxima local}
+ 
+ No trabalho de \cite{dralle1996} a técnica de filtragem máxima local foi desenvolvida para aplicar no estudo de fotos pancromática aérea de \textit{Picea abies}. O número de árvores por hectares é estimado a partir do número de máximos acima de um determinado nível da imagem suavizada.
+ \textcolor{green}{ATENÇÃO PROFESSOR: Neste artigo não encontrei algo exato que diz que kernel smoothing e filtragem maxima local são sinônimos.}
+ 
+ Primeiramente foi feita a transformação da borda da subparcela da imagem, em seguida foi aplicada a suavização do núcleo. 
+ 
+ A definição de \textit{suavização do núcleo} de uma imagem com um kernel gaussiano arbitrário, é determinado pelos três parâmetros $\sigma_{1}$, $\sigma_{2},$ e  $\rho$. Seja $x_{i} = (x_{i1},x_{i2})^{T}$ onde \textit{i=1,2, ..., I}, denotam os centros de pixels dos pixels \textit{I} de uma imagem. Coloque:
+ \begin{equation}
+     \sum  = \binom{\sigma_{1}^{2} \ \ \ \ \ \ \ \ \rho\sigma_{1}\sigma_{2}}{\rho\sigma_{1}\sigma_{2} \ \ \ \ \ \ \ \ \sigma_{2}^{2}} 
+ \end{equation}
+ e
+ 
+ \begin{equation}
+     G_{ij} = k_{i} \ exp \left ( -\frac{1}{2}(x_{i} - x_{j})^T \sum ^{-1}(x_{i} - x_{j})  \right )
+ \end{equation}
+onde \textit{i = 1,2, ..., I}, e $k_{i}$ é uma constante de normalização tal que:
+\begin{equation}
+    \sum_{j=1}^{I} G{ij}= 1, \ \ \ \ \ \ \ \ i = 1,2,..., I
+\end{equation}
+ Foi notado que $k_{i}$ é essencialmente constante para pixels que não estão próximos da borda da imagem.
+ 
+ Seja $V_{i}$, \textit{i=1,2, ..., I}, denota os valores de nível de cinza dos pixels em uma imagem. Em seguida, os níveis de cinza da imagem suavizada do kernel são fornecidos pela operação de filtragem:
+ \begin{equation}
+     V'_{i} = \sum_{j=1}^{I}G_{ij}V_{j}, \ \ \ \ i=1,2, ...,I
+ \end{equation}
+ Neste estudo, foi escolhido por simplicidade um núcleo isotrópico, $\rho = 0$ e $\sigma_{1} = \sigma_{2} = \sigma$. 
+ 
+ Posteriormente, foi detalhado o processo de determinação de máximos acima do modo. Remova a área fora de todas as subparcelas brutas da imagem suavizada e calcule um histograma dos níveis de cinza dos pixels restantes. Se for necessário desenhar linhas de contorno na imagem suavizada, a linha mais longa será antecipada para o nível de cinza mais comum, isto é, o modo (o nível de cinza do máximo do histograma). Picos abaixo desse valor não devem corresponder às copas das árvores, mas explicarão a variação na intensidade da luz nos galhos mais baixos das árvores ou nas estruturas entre as árvores.
+ 
 
-
+O histograma bruto nem sempre tem um modo inequívoco. Ao suavizar o histograma bruto com uma distribuição Gaussiana unidimensional (semelhante ao suavização com uma distribuição bidimensional na Eq. 2.27 com um desvio padrão apropriado, uma distribuição com um modo inequívoco pode ser recuperada. Deixe $V_{mode}$ denotar o modo do histograma suavizado. Depois, contamos para cada subtrama o número de máximos dentro das bordas da subtrama com nível de cinza acima do modo $V_{mode}$.
+%Voltar aqui!!!%
+ 
 \subsection{Rotulação de Componentes conectados}
 
 Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitas aplicações automatizadas de análise de imagem. $A$ é um conjunto de pixels de objetos que consiste em um ou mais componentes conectados. Seja $X_{0}$ um pixel de objeto de $A$. Pode-se extrair o componente conectado pelo procedimento interativo dado por: 

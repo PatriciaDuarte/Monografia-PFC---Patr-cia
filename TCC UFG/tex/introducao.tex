@@ -34,22 +34,8 @@ Nesta pesquisa, técnicas de processamento digital de imagens serão aplicadas n
 
 
 \section{Metodologia}
+\sergio{Resumir a metodologia aqui!}
 
-Este trabalho fará uma investigação experimental de técnicas de processamento de imagens, com o objetivo de desenvolver e comparar metodologias para a detecção e contagem de árvores. Sendo assim, a metodologia de condução da pesquisa envolve a pesquisa, estudo e experimentação de variadas técnicas candidatas para compor metodologias para a resolução do problema. Devido a existência de várias formas distintas de se tratar o problema, conforme mencionado no Capítulo~\ref{chapter:correlatos}, de trabalhos correlatos, este trabalho foca na experimentação de comparação de abordagens baseadas em segmentação, usando uma abordagem de crescimento de regiões, e baseados na detecção de picos. Assim, métodos baseados em \textit{template} e em aprendizado profundo não serão investigados neste estudo. 
-
-Dentro do escopo de investigação delimitado as sub-tarefas do problema envolvem:
-\begin{enumerate}
-    \item Detecção de vegetação: basicamente consiste da distinção entre os pixels de vegetação e de não-vegetação (solo, edificações, leitos d'água, estradas, entre outros). Para isto é tradicional na literatura o emprego de índices de vegetação. Basicamente um índice de vegetação~\cite{Torres2014} é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar pixels de vegetação de pixels de não-vegetação. Um índice de vegetação toma como entrada uma imagens colorida ou multiespectral e retorna uma imagem em níveis de cinza onde pixels que contém uma maior evidência de que seja vegetação, terá valores mais altos. Como o interesse final desse etapa é fazer um distinção entre pixels de vegetação e não vegetação a imagem do índice de vegetação é binarizada. Existem vários métodos de binarização, sendo o mais tradicionais o método de Otsu~\cite{Gonzales2010} e métodos de binarização local, tal como Sauvola~\cite{Sauvola2000}. 
-    
-    \item Processamento morfológico: após a binarização é comum a existência regiões desconexas de uma copa de árvore, copa de árvores distintas conectadas, e de pontos e objetos detectados que não correspondem os objetos de interesse, tal como manchas de ervas daninhas. Para amenizar esses problemas, é comum o emprego de técnicas que fazem uma análise e correção de forma, denominadas de técnicas de morfologia matemática. Estas servem, entre outras coisas, para conexão de objetos, separação de objetos conectados, e eliminação de pequenas regiões.
-    
-    \item Segmentação/detecção de árvores: nessa etapa serão aplicados métodos para a detecção de árvores, onde experimentaremos o método baseada no conceito de inundação denominado \textit{watershed} e o método de filtragem máxima local. Para a aplicação do método de filtragem máxima local, aplicamos antes o método de transformada da distância que produzirá valores mais altos no centro das regiões candidatas a copas de árvores.
-    
-    \item Rotulação/contagem de árvores: Sobre o resultado da segmentação, os da filtragem máxima local aplicam um método de rotulação de componentes conectados para o caso de segmentação, e um simples calculo de contagem dos valores máximos locais, no caso da aplicação do método de filtragem máxima local.
-    
-    \item Análise dos resultados: será desenvolvido manualmente uma base de imagens de \textit{ground-truth} com a delimitação da copa de cada árvore. Com base nas imagens de \textit{ground-truth} serão mensurados os desempenhos de detecção e contagem de árvores das metodologias desenvolvidas, usando medidas tradicionais da literatura de detecção de objetos, tais como precisão, sensitividade, especificidade, entre outras.  
-    
-\end{enumerate}
 
 
 \section{Principais resultados e contribuições iniciais}
@@ -71,8 +57,11 @@ Segundo \citeonline{Daliman2016}, a análise de árvores individuais com base em
 
 Outros desafios para o desenvolvimento de métodos de contagem de árvores, de acordo com os estudos de \citeonline{Daliman2016}, é que poderá haver erros de detecções de árvores, e isso ocorre por causa da proximidade de árvores vizinhas, árvores que estão localizadas sob outras árvores, árvores à sombra ou árvores que tem baixo contraste espectral com o fundo. Apesar desses problemas, é de extrema importância fazer a detecção devida as análises agrícolas e aplicações subsequentes.
 
-\sergio{Apontar as dificuldades e limitações dos resultados iniciais} 
+Inicialmente o escopo do trabalho seria de \textit{Contagem de plantas}, ao efetuar a leitura dos trabalhos correlatos que serão apresentados no Capítulo~\ref{chapter:correlatos}, o escopo foi definido por \textit{Contagem de árvores}. 
+Também através da leitura dos trabalhos correlatos, foi definida a limitação dos métodos que serão usados aqui no trabalho e na disciplina de PFC2. 
+
+A primeira etapa desenvolvida na metodologia, foi montar a base de imagens através da API Python do Google Maps. Na etapa de execução dos testes iniciais, foi visto que será importante encontrar o padrão de tamanho e espaçamento entre as árvores. Nos trabalhos correlatos, foram definidas medidas de precisão de erros, para este ponto ser desenvolvido.
 
 \section{Organização da monografia}
 
-O restante desse trabalho está dividido da seguinte forma. No Capítulo~\ref{chapter:conceitosPDI} são apresentados os principais conceitos básicos de processamento de imagens necessários para a compreensão das metodologias desenvolvidas para a contagem de árvores. No Capítulo~\ref{chapter:correlatos} são categorizadas de acordo com as técnicas e discutidos as principais pesquisas de contagem de árvores. No Capítulo~\ref{chapter:desenvolvimento} são apresentados o desenvolvimento e os resultados iniciais. Portanto, o Capítulo~\ref{chapter:conclusao} apresenta conclusões sobre os principais desenvolvimentos feitos na disciplina de PFC1, e o cronograma para PFC2. 
+O restante desse trabalho está dividido da seguinte forma. No Capítulo~\ref{chapter:conceitosPDI} são apresentados os principais conceitos básicos de processamento de imagens necessários para a compreensão das metodologias desenvolvidas para a contagem de árvores. No Capítulo~\ref{chapter:correlatos} são categorizadas de acordo com as técnicas e discutidos as principais pesquisas de contagem de árvores. No Capítulo~\ref{chapter:desenvolvimento} são apresentados o desenvolvimento e os resultados iniciais. Portanto, o Capítulo~\ref{chapter:conclusao} apresenta conclusões sobre os principais desenvolvimentos feitos na disciplina de PFC1 e o cronograma. 

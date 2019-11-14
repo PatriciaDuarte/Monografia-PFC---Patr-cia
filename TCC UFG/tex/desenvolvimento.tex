@@ -1,25 +1,45 @@
-
+\textcolor{red}{Lembrete:TROCAR O TERMO PLANTA POR ÁRVORE NESTE CAPÍTULO}
+\section{Considerações iniciais}
+Este capítulo descreve a metodologia e resultados iniciais elaborado para fazer a Contagem de árvores usando métodos de Segmentação Watershed e Filtragem máxima local. Foi detalhado os passos do processamento das imagens, como: Desenvolvimento da base de dados de imagens, o planejamento da metodologia, desenvolvimento inicial e resultados iniciais obtidos.
 \section{Base de dados de imagens}
 
-Foram coletas imagens de plantações de jabuticabeiras e de coqueiros, utilizando a API Python do Google Maps. A API do Google Maps permite obter imagens de satélite do Google Maps, informando como entrada as coordenadas de latitude de longitude e um parâmetro de \textit{zoom}. A API também possui constantes internas que permite definir a dimensão (linhas \versus colunas) da imagem desejada a partir do ponto de latitude e longitude especificado. Pela API o nível de zoom varia no intervalo de 0 -- 23, sendo 23 o maior nível de \textit{zoom}. Coletamos imagens com nível de \texit{zoom} 18. Todas as imagens de satélite obtidas foram captadas pelo satélite Airbus/CNES em 2019. A nossa base de dados é formada por imagens das seguintes localidades/plantações:
+Foram coletas imagens de plantações de jabuticabeiras e de coqueiros, utilizando a API Python do Google Maps. A API do Google Maps permite obter imagens de satélite do Google Maps, informando como entrada as coordenadas de latitude e de longitude, e um parâmetro de \textit{zoom}. A API também possui constantes internas que permite definir a dimensão (linhas \versus colunas) da imagem desejada a partir do ponto de latitude e longitude especificado. A API contém um nível de zoo que varia no intervalo de 0 -- 23, sendo 23 o maior nível de \textit{zoom}. Coletamos imagens com nível de \texit{zoom} 18. Todas as imagens de satélite obtidas até o momento foram captadas pelo satélite Airbus/CNES em 2019. Até então nossa base de dados é formada por imagens das seguintes localidades/plantações:
 
 \begin{description}
 \item[Fazenda Jabuticabal / plantação de jabuticabeiras]: A Fazenda Jaboticabal é localizada na GO-319, Hidrolândia -- GO, latitude: -16.911523, longitude: -49.360602 (16°54'41.5"Sul, 49°21'38.2" Oeste).
 
-\item[Fazenda em Porto Seguro / plantação de coqueiros]: A Fazenda de plantação de coqueiros da Bahia no município de Porto Seguro -- , latitude: -16.378640, longitude: -39.089385 (16°22'43.1" Sul, 39°05'21.8"" Oeste).
-
+\item[Fazenda em Porto Seguro / plantação de coqueiros]: Fazenda de plantação de coqueiros na Bahia , município de Porto Seguro, latitude: -16.378640, longitude: -39.089385 (16°22'43.1" Sul, 39°05'21.8"" Oeste).
 \end{description}
 
+\sergio{No decorrer do desenvolvimento do PFC2 pretende-se coletar um maior número de imagens destas plantações e analisar outras plantação de árvores de outras espécie para a captura de imagens. Além disso pretende-se criar imagens de \textit{ground-truth} para que se possa mensurar quantitativamente a qualidade dos algoritmos de detecção de árvores que serão desenvolvidos.}  
 
-\section{Metodologia inicial}
+\section{Metodologia planejada}
+
+\sergio{Descrevemos a metodologia planejada em termos dos passos que pretense-se seguir para a identificação e contagem de árvores. Basicamente estes passos são: detecção de vegetação, processamento morfológico, segmentação/detecção de árvores, e rotulação.}
+
+\begin{enumerate}
+    \item Detecção de vegetação: basicamente consiste da distinção entre os pixels de vegetação e de não-vegetação (solo, edificações, leitos d'água, estradas, entre outros). Para isto é tradicional na literatura o emprego de índices de vegetação \sergio{que, com base no valores espectrais de pixels, diferencia os pixels de vegetação dos pixels de não-vegetação. Um índice de vegetação normalmente produz um valor para cada pixel, onde valores mais altos indicam uma maior probabilidade deste ser um pixel de vegetação. Como o objetivo dessa etapa é distinguir pixels de vegetação de pixels de não-vegetação, a imagem/mapa de pixels produzida pelo índice de vegetação é binarizada. Existem vários métodos de binarização, sendo o mais tradicionais o método de Otsu~\cite{Gonzales2010} e métodos de binarização local, tal como Sauvola~\cite{Sauvola2000}. Neste trabalho pretendemos explorar os índices de vegetação descritos no Capítulo~\ref{chapter:conceitosPDI} em combinação com o método de binarização de Otsu.}    
+    
+    \item Processamento morfológico: após a binarização é comum a existência regiões desconexas de uma copa de árvore, copa de árvores distintas conectadas, e de pontos e objetos detectados que não correspondem os objetos de interesse, tal como manchas de ervas daninhas. Para amenizar esses problemas, é comum o emprego de técnicas que fazem uma análise e correção de forma, denominadas de técnicas de morfologia matemática. Estas servem, entre outras coisas, para conexão de objetos, separação de objetos conectados, e eliminação de pequenas regiões. \sergio{Vale observar que alguns problemas que podem ocorrer em imagens, tal como objetos distintos conectados e o mesmo objeto fragmentado, são antagônicos. Assim, deve se investigar e desenvolver uma técnica que melhor atenda a aplicação.} 
+    
+    \item Segmentação/detecção de árvores: nessa etapa serão aplicados métodos para a detecção de árvores, onde experimentaremos o método baseada no conceito de inundação denominado \textit{watershed} e o método de filtragem máxima local. Para a aplicação do método de filtragem máxima local, aplicamos antes o método de transformada da distância que produzirá valores mais altos no centro das regiões candidatas a copas de árvores.
+    
+    \item Rotulação/contagem de árvores: Sobre o resultado da segmentação, os da filtragem máxima local aplicam um método de rotulação de componentes conectados para o caso de segmentação, e um simples calculo de contagem dos valores máximos locais, no caso da aplicação do método de filtragem máxima local.
+    
+    \item Análise dos resultados: será desenvolvido manualmente uma base de imagens de \textit{ground-truth} com a delimitação da copa de cada árvore. Com base nas imagens de \textit{ground-truth} serão mensurados os desempenhos de detecção e contagem de árvores das metodologias desenvolvidas, usando medidas tradicionais da literatura de detecção de objetos, tais como precisão, sensitividade, especificidade, entre outras.  
+    
+\end{enumerate}
+
+\section{Desenvolvimento inicial}
 
 Nesta seção descrevemos as duas metodologias usadas para a contagem de plantas. Conforme mencionado anteriormente as metodologias compartilham de uma fase inicial de processamento comum e se diferem no método de identificação de árvores. Após a identificação as árvores são rotuladas. A Figura~\ref{fig:metodologia} ilustra as metodologias desenvolvidas e comparadas. Inicialmente é feito uma conversão para níveis de cinza. Em seguida é aplicado o método de Otsu para binarização, com o intuito de separar pixels de plantas de outras classes de pixels. Com o objetivo de preencher buracos nas copas das plantas e eliminar fendas estreitas entre plantas é aplicado um processamento morfológico. Posteriormente é aplicada a transformada da distância com o intuito de dar valores mais altos no centro da copa das plantas e valores mais baixos à medida que se distância do centro da copa da árvore; este é um processamento padrão em vários algoritmos de identificação de objetos. O processamento até este momento é comum à ambas as metodologias. Tomando como entrada a imagem produzida pela transformada da distância, foi aplicado dois métodos para a detecção de plantas: segmentação \textit{watershed} e detecção de picos pela filtragem máxima local. Em seguida as árvores detectadas são rotuladas, sendo o número de rótulos atribuídos igual ao número estimado de árvores.  
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\textwidth]{images/metodologia_pat.pdf}
 \caption{Passos das metodologias propostas para a contagem de árvores.}
+\includegraphics[width=1\textwidth]{images/metodologia_pat.pdf}
 \label{fig:metodologia}
+Fonte: Elaborada pela autora
 \end{figure}
 
 
@@ -84,24 +104,30 @@ Os imagens de satélite usadas, baixas através da API do Google Maps são mostr
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\textwidth]{images/coco.png}
 \caption{Imagem de satélite de uma plantação de coqueiros na Bahia.}
+\includegraphics[width=1 \textwidth]{images/coco.png}
 \label{fig:coco}
+
+Fonte: Elaborada pela autora.
 \end{figure}
 
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=1\textwidth]{images/jabuticaba.png}
 \caption{Imagem de satélite de uma plantação de jabuticabeiras em Hidrolândia, Goiás.}
+\includegraphics[width=0.98\textwidth]{images/jabuticaba.png}
 \label{fig:jabuticaba}
+
+Fonte: Elaborada pela autora.
 \end{figure}
 
 \begin{table}[h]
+\caption{Resultados de contagem de árvores de jabuticabeira e coqueiros manual e dadas metodologias desenvolvidas.}
+
 \begin{center}
 \begin{tabular}{ |l|l|l|l|l|l| } 
 \hline
-\multirow{2}{4em}{Espécie} & \multicolumn{3}{|c|}{Quantidade de plantas} & \multicolumn{2}{|c|}{Taxa de acerto}\\
+\multirow{2}{4em}{Espécie} & \multicolumn{3}{|c|}{Quantidade de árvores} & \multicolumn{2}{|c|}{Taxa de acerto}\\
  & manual & LM & watershed & LM & watershed\\ 
 \hline
 Jabuticabeiras	& 1569	& 1444	& 1821	& 92.03\%	& 83.94\%\\
@@ -110,6 +136,9 @@ coqueiros &	1489 & 1383	& 1669	& 92.88\% &	87.91\%\\
 \hline
 \end{tabular}
 \end{center}
-\caption{Resultados de contagem de plantas de jabuticabeira e coqueiros manual e dadas metodologias desenvolvidas.}
+\centering{ Fonte:Autoria própria.}
 \label{tab:results}
 \end{table}
+
+\section{Considerações finais}
+Este capítulo apresentou o desenvolvimento inicial deste trabalho para fazer a contagem de árvores usando métodos de Segmentação Watershed e Filtragem máxima local. Foi abordado os passos do processamento das imagens, como: desenvolvimento da base de dados de imagens, o planejamento da metodologia, desenvolvimento inicial e resultados iniciais obtidos.

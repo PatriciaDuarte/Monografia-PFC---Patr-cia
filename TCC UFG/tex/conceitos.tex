@@ -256,12 +256,11 @@ Fonte: \citeonline{Gonzales2010}
 
 \subsection{Filtragem máxima local}
  
- No trabalho de \cite{dralle1996} a técnica de filtragem máxima local foi desenvolvida para aplicar no estudo de fotos pancromática aérea de \textit{Picea abies}. O número de árvores por hectares é estimado a partir do número de máximos acima de um determinado nível da imagem suavizada.
- \textcolor{green}{ATENÇÃO PROFESSOR: Neste artigo não encontrei algo exato que diz que kernel smoothing e filtragem maxima local são sinônimos.}
+No trabalho de \cite{dralle1996} a técnica de filtragem máxima local foi desenvolvida para aplicar no estudo de fotos pancromática aérea de \textit{Picea abies}. O número de árvores por hectares é estimado a partir do número de máximos acima de um determinado nível da imagem suavizada.\sergio{SUGIRO QUE NESSA SEÇÃO VC FALE SOMENTE DO MÉTODO.} \textcolor{green}{ATENÇÃO PROFESSOR: Neste artigo não encontrei algo exato que diz que kernel smoothing e filtragem maxima local são sinônimos.} \sergio{É A MESMA COISA. JÁ ACHEI ARTIGO QUE FALA ISSO.}
  
- Primeiramente foi feita a transformação da borda da subparcela da imagem, em seguida foi aplicada a suavização do núcleo. 
+Primeiramente \sergio{foi feita a transformação da borda [COMO?]} da \sergio{subparcela [O QUE É ESSE TERMO?]} da imagem, em seguida foi aplicada a suavização do núcleo. 
  
- A definição de \textit{suavização do núcleo} de uma imagem com um kernel gaussiano arbitrário, é determinado pelos três parâmetros $\sigma_{1}$, $\sigma_{2},$ e  $\rho$. Seja $x_{i} = (x_{i1},x_{i2})^{T}$ onde \textit{i=1,2, ..., I}, denotam os centros de pixels dos pixels \textit{I} de uma imagem. Coloque:
+A definição de \textit{suavização do núcleo \sergio{ACHO QUE NÃO É O TERMO CORRETO}} de uma imagem com um kernel gaussiano arbitrário, é determinado pelos três parâmetros $\sigma_{1}$, $\sigma_{2},$ e  $\rho$. Seja $x_{i} = (x_{i1},x_{i2})^{T}$ onde \textit{i=1,2, ..., I}, denotam os centros de pixels dos pixels \textit{I} de uma imagem. Coloque:
  \begin{equation}
      \sum  = \binom{\sigma_{1}^{2} \ \ \ \ \ \ \ \ \rho\sigma_{1}\sigma_{2}}{\rho\sigma_{1}\sigma_{2} \ \ \ \ \ \ \ \ \sigma_{2}^{2}} 
  \end{equation}

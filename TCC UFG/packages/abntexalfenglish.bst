@@ -487,7 +487,7 @@ FUNCTION {write.entry.verbatim3}
    "abnt-ldots-type" 	abnt-ldots-type 	write.field.verbatim
    "abnt-missing-year" 	abnt-missing-year 	write.field.verbatim
    "abnt-cite-style" 	abnt-cite-style 		write.field.verbatim
-   "abnt-no-etal-label" abnt-no-etal-label 	write.field.verbatim
+   "abnt-no-etal-labelR" abnt-no-etal-label 	write.field.verbatim
    %abnt-note
    "abnt-repeated-author-omit" abnt-repeated-author-omit write.field.verbatim
    "abnt-repeated-title-omit" abnt-repeated-title-omit write.field.verbatim

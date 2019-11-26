@@ -2,11 +2,67 @@
 
 Este capítulo explora metodologias existentes na literatura para a detecção e contagem de árvores. Primeiramente é descrito o tipo de imagem pesquisada, em seguida a espécie da árvore, as técnicas usadas e o desempenho destas. As principais categorias de métodos para detecção e contagem de árvores são: baseados em \textit{template}; baseados em segmentação; baseados na detecção de picos; baseados em redes neurais convolucionais profundas; e métodos em detecção de blobs (regiões), agrupamento e classificação.
 
+Na Tabela~\ref{tab:correlatos} foram sumarizados os trabalhos estudados, especificando os autores, cultura/local, tipo de imageamento, método principal e precisão. Mais detalhes de cada trabalho são detalhados nas seções a seguir.
 
-\sergio{FAZER TABELA!! Na Tabela~\ref{} nos sumarizamos as pesquisas identificadas, especificando o tipo de imagem, , as espécies de árvores, o método principal de detecção. Mais detalhes de cada trabalho são dados nas seções a seguir.}
+
+\begin{center}
+\caption{Sumarização dos trabalhos correlatos}
+\begin{longtable}{|p{3cm}|p{3cm}|p{3cm}|p{2cm}|p{1.3cm}|} % LONGTABLE QUEBRA A TABELA
+\hline
+
+\textbf{Autores}&\textbf{Cultura/Local}&\textbf{Tipo de Imageamento}&\textbf{Método principal}&\textbf{Precisão}\\
+\hline
+
+González-Jiménez et al.(2007)&	Contagem de Oliveiras,Sul da Espanha	&Imagens de satélite QuickBird de alta resolução&Método baseado em template& 99.25\% \\
+\hline
+Vibha et al. (2009)&Contagem de palmeiras de Mysore, Karnataka(Índia)&	Imagens de satélite QuickBird&Método baseado em template & 88\%\\
+\hline
+Maillard e Gomes (2016)&Nogueiras, laranjeiras, mangueiras e macieiras, Não especificado.&Imagens de satélite coletadas via Google Earth&Método baseado em template& +90\% e -75\%\\
+\hline
+Wulder et al. (2004)&Abeto-de-Douglas e Cedro Vermelho Ocidental,British Columbia(Canada)&	Imagens de satélite IKONOS e MEIS II&	Filtragem máxima local&	85\% e 67\%\\
+\hline
+Disperati et al. (2007)&Pinus elliotti,Floresta Nacional de Irati(Paraná)&Imagens de fotografias aéreas&	Filtragem máxima local&	97\%\\
+\hline
+Gebreslasie et al. (2011)&Eucalipto, KwaZulu-Natal(Africa do Sul)&	Imagens de satélite&Filtragem máxima local&85\%\\
+\hline
+Katoh e Gougeon (2012)&	Árvores coníferas de cinco espécies, Japão&	Imagens multiespectrais (RGB e infravermelho) de alta Resolução&	Filtragem máxima local&	84\%\\
+\hline
+Recio et al. (2013)&Contagem de árvores citricas, em Valência-Espanha&	Imagens de satélite de alta resolução&Filtragem máxima local&	95.96\%\\
+\hline
+Franco et al. (2013)&Contagem de árvores cítricas, Massafra(Sul da Itália)&	Imagens de satélite GeoEye-1&	Filtragem mínima local&	98.3\%\\
+\hline
+Srestasathiern e Rakwatin (2014)&Contagem de Dendezeiros, Tailândia&	Imagens do satélite QuickBird&	Filtragem máxima local&	90\%\\
+\hline
+Koch, Heyder e Weinacker (2006)&Carvalho Inglês, Carvalho Vermelho e Maple Norueguês,Alemanha &Imagens por tecnologia laser a partir de sensores LIDAR instalados em aeronaves&	Filtragem máxima local e Watershed&	87.3\%\\
+\hline
+Srestasathiern e Rakwatin (2014)&Contagem de Dendezeiros, Tailândia&	Imagens do satélite QuickBird&	Filtragem máxima local&	90\%\\
+\hline
+Koch, Heyder e Weinacker (2006)&Carvalho Inglês, Carvalho Vermelho e Maple Norueguês,Alemanha &Imagens por tecnologia laser a partir de sensores LIDAR instalados em aeronaves&	Filtragem máxima local e Watershed&	87.3\%\\
+\hline
+Strimbu e Strimbu (2015)&Contagem de três espécies de Pinus, Não especificado&Imagens obtidas com técnicas laser com sensor LIDAR em aviões&	Segmentação baseada em grafo&	87\% - 100\%\\
+\hline
+Kestur et al. (2018)&Contagem de Plantações de manga, banana e coqueiros da Índia, Não especificado&Imagens de alta resolução espacial de veículos aéreos não tripulados (VANTs)&	Watershed&	Não especificado\\
+\hline
+ LI et al., 2017&Contagem de Dendezeiros, Malásia&Imagens do satélite QuickBird multiespectrais e de alta resolução&	Redes neurais convolucionais&	96\%\\
+\hline
+PUTTEMANS; BEECK; GOEDEMé, 2018&Contagem de coqueiros, Não especificado&	Imagens aéreas de alta resolução&Cascata e Aprendizado profundo& 97.4\% e  94.56\%\\
+\hline
+Reis, Oliveira e Carvalho (2007)&	Contagem de Eucalyptus ssp, Não especificado&Imagens de alta resolução&	Classificador ISODATA&93.58\%\\
+\hline
+Daliakopoulos et al. (2009)&Contagem de fruteiras, Keritis(Ilha de Creta)&Imagens de satélite multiespectral de alta resolução captadas pelo satélite QuickBird&Método de detecção de regiões (blobs)&94.1\%\\
+\hline
+Bazi, Al-Sharari e Melgani (2009)&Contagem de Oliveiras, Não especificado&Imagens de alta resolução coletadas pelo satélite IKONOS-2&Método de detecção de regiões(blobs)&96\%\\
+\hline
+Bazi et al. (2014)&	Contagem palmeiras, Não especificado&Imagens captadas por VANT&	Scale Invariant Feature Transform (SIFT) e Extreme Learning Machine&91.11\%\\
+\hline
+Rizeei H. Z. M. Shafri e Kalantar (2018)&Contagem de dendezeiros, Não especificado&Imagens de satélite Worldview-3 e  LiDAR& 	Segmentação baseada em bordas&	98.80\% \\
+\hline
+ \end{longtable}
+\label{tab:correlatos}
+Fonte:  Elaborada pela autora
+\end{center}
 
 \section{Métodos baseados em \textit{template}}
-
 Métodos de casamento de template~\cite{Gonzalez2007,Vibha2009,Maillard2016}, constroem uma série de modelos para caracterizar os aspectos de árvores, levando em consideração a geometria da copa e propriedades radiométricas. Uma vez construídos os \textit{templates} um procedimento de janela deslizante é implementado para buscar os melhores casamentos, isto é, os locais de maiores probabilidades de existência de árvores. 
 
 \citeonline{Gonzalez2007} usa imagens de satélite QuickBird de alta resolução do Sul da Espanha para a contagem de Oliveiras. O método consiste da detecção de bordas através do operador Canny e computação do centroide de cada objeto através da transformada da distância de Chamfer. Os autores também classificam os candidatos à árvores de Oliveira através de um método probabilístico baseado em \textit{template}. A precisão do método na detecção de plantas é 99.25\%.  O resultado é um conjunto de pontos que estima o centro da copa das árvores.
@@ -23,7 +79,7 @@ Métodos de filtragem máxima local são usados para detectar picos locais, dado
 Filtragem máxima local é empregada em um grande número de trabalhos de detecção e contagem de árvores. 
 \citeonline{wulder2004} usa imagens de satélite IKONOS e MEIS II, da ilha de Vancouver, estado de British Columbia, Canada, para a contagem de árvore Abeto-de-Douglas e Cedro Vermelho Ocidental. A técnica usada para a detecção das árvores foi a de filtragem máxima local. Usando imagens de satélite IKONOS teve-se 85\% de precisão enquanto que usando imagens de satélite  MEIS II teve-se  67\% de precisão.
 
-\citeonline{Disperati2007} usa imagens de fotografias aéreas para a contagem de \textit{Pinus elliottii} na Floresta Nacional de Irati, Paraná.  Para a contagem os autores empregam a técnica de filtragem local máxima, onde os autores investigaram o influência do tamanho de máscaras do filtro em função da resolução das imagens. Com as imagens de maior resolução, de 600 dpi, foram obtidos o melhor resultado, sendo este de 97\% de precisão.
+\citeonline{Disperati2007} usa imagens de fotografias aéreas para a contagem de \textit{Pinus elliottii} na Floresta Nacional de Irati, Paraná.  Para a contagem os autores empregam a técnica de filtragem máxima local, onde os autores investigaram o influência do tamanho de máscaras do filtro em função da resolução das imagens. Com as imagens de maior resolução, de 600 dpi, foram obtidos o melhor resultado, sendo este de 97\% de precisão.
 
 \citeonline{Gebreslasie2011} usa imagens de satélite para a contagem de árvores de Eucalipto em KwaZulu-Natal, Africa do Sul. Os autores aplicam suavização gaussiana e filtragem máxima local. A taxa de precisão obtida foi de 85\%. 
 
@@ -48,7 +104,7 @@ Uma outra abordagem utilizada é a segmentação baseada em grafo. O trabalho de
 
 Técnicas recentes de aprendizagem profunda tem sido empregadas com sucesso em alguns trabalhos. \cite{Li2017} também usa imagens do satélite QuickBird multiespectrais e de alta resolução para a detecção e contagem de dendezeiros. Neste trabalho as imagens empregadas são da Malásia. Os autores apresentaram um framework de aprendizagem profunda para detecção e contagem de plantas. Eles usaram um conjunto de amostras manualmente rotuladas para treinar e otimizar uma rede neural convolucional. Em seguida foram preditos rótulos para  amostras da base de dados tomadas através de uma técnica de janela deslizante. Em seguida as coordenadas correspondentes à mesma árvore foram combinadas para obter o resultado de detecção final. A precisão obtida foi de 96\%.
 
-\cite{Puttemans2018} compara três arquiteturas para a detecção e classificação de coqueiros em imagens aéreas de alta resolução. uma cascata sugerida por Viola e Jones, a arquitetura proposta por Dollár baseado em um conceito de agregação ou integração de características e uma arquitetura de aprendizado profundo. Os melhores resultados foram obtidos por aprendizagem profunda com 97.4\% de acurácia, seguido pela técnica em cascata com 94.56\% de acurácia. O local da plantação não é mencionado.
+\cite{Puttemans2018} compara três arquiteturas para a detecção e classificação de coqueiros em imagens aéreas de alta resolução. Uma cascata sugerida por Viola e Jones, a arquitetura proposta por Dollár baseado em um conceito de agregação ou integração de características e uma arquitetura de aprendizado profundo. Os melhores resultados foram obtidos por aprendizagem profunda com 97.4\% de acurácia, seguido pela técnica em cascata com 94.56\% de acurácia. O local da plantação não é mencionado.
 
 %Detection of Individual Tree Crowns in Airborne Lidar Data – Koch 2006
 %(Detecção de copas de árvores individuais em dados aéreos de Lidar )
@@ -88,7 +144,7 @@ Técnicas recentes de aprendizagem profunda tem sido empregadas com sucesso em a
 
 \section{Outros Métodos}
 
-No trabalho de \citeonline{Reis2007} foram usadas imagens de alta resolução para fazer contagem de Eucalyptus ssp. Primeiramente, foi aplicado o filtro de Lee e em seguida o classificador não-supervisionado ISODATA. Em seguida a classificação do ISODATa foi checado com o auxílio de um sistema de Informações Geográficas (SIG). A abordagem obteve 93.58\% de acerto.
+No trabalho de \citeonline{Reis2007} foram usadas imagens de alta resolução para fazer contagem de Eucalyptus ssp. Primeiramente, foi aplicado o filtro de Lee e em seguida o classificador não-supervisionado ISODATA. Em seguida a classificação do ISODATA foi checado com o auxílio de um sistema de Informações Geográficas (SIG). A abordagem obteve 93.58\% de acerto.
 
 \citeonline{Daliakopoulos2009} usa imagens de satélite multiespectral de alta resolução captadas pelo satélite QuickBird, para a contagem de fruteiras em Keritis, na Ilha de Creta. O método consiste de uma combinação da banda vermelha com o índice de vegetação NDVI, limiarização e a aplicação do método de detecção  de regiões (blobs) denominado Laplaciano da Gaussiana. A precisão médio na contagem de árvore na melhor combinação do método foi de 94.1\%.
 

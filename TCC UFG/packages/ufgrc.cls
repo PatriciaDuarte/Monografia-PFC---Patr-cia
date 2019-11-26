@@ -209,6 +209,7 @@
 \newcommand{\case}[2]{#1 #2} % Dummy, so \renewcommand has something to overwrite...
 \newenvironment{switch}[1]{\renewcommand{\case}{\ifequals{#1}}}{}
 
+
 % Palavras-chave do resumo
 \newcommand{\palavraschave}{}
 

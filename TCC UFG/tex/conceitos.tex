@@ -1,11 +1,11 @@
 \section{Considerações iniciais}
-Neste capítulo serão descritos conceitos básicos de processamento de imagens usados na literatura para a detecção e contagem de árvores. Como essa pesquisa foca em abordagens baseada em detecção de picos e em segmentação por crescimento de regiões através do método baseado em inundação (\textit{watershed}), os conceitos descritos são relacionados para o desenvolvimento de métodos baseados nessas abordagens. Para ambas as abordagens, está sendo desenvolvida uma etapa de pré-processamento comum, que tem como objetivo evidenciar as regiões das copas das árvores. Na seções a seguir, apresentamos primeiramente as técnicas que estão sendo investigadas para o pré-processamento, as quais são: índices de vegetação, binarização pelo método de Otsu, morfologia matemática e transformada da distância. Em seguida são apresentados os conceitos de segmentação por \textit{watershed} e de filtragem máxima local. Por fim, será apresentado conceitos de rotulação de componentes conectados e medida de desempenho de detecção que serão usados neste trabalho.   
+Neste capítulo serão descritos conceitos básicos de processamento de imagens usados na literatura para a detecção e contagem de árvores. Como essa pesquisa foca em abordagens baseada em detecção de picos e em segmentação por crescimento de regiões através do método baseado em inundação (\textit{watershed}). Os conceitos descritos são relacionados para o desenvolvimento de métodos baseados nessas abordagens. Para ambas as abordagens, está sendo desenvolvida uma etapa de pré-processamento comum, que tem como objetivo evidenciar as regiões das copas das árvores. Na seções a seguir, apresentamos primeiramente as técnicas que estão sendo investigadas para o pré-processamento, as quais são: índices de vegetação, binarização pelo método de Otsu, morfologia matemática e transformada da distância. Em seguida são apresentados os conceitos de segmentação por \textit{watershed} e de filtragem máxima local. Por fim, será apresentado conceitos de rotulação de componentes conectados e medida de desempenho de detecção que serão usados neste trabalho.   
 
 \subsection{Índices de vegetação}
 
-Basicamente um índice de vegetação~\cite{Torres2014}, é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar os pixels de vegetação dos pixels de não-vegetação, tais como no solo, leitos de água, estradas, construções, entre outros. Um índice de vegetação, toma como entrada uma imagem colorida ou multiespectral\footnote{Uma imagem multiespectral consiste do imageamento de um mesmo objeto, tomado com base em diferentes comprimentos de ondas eletromagnéticas tais como luz visível, infravermelha, ultravioleta, raio-X ou qualquer outra faixa do espectro eletromagnétioco.}, e retorna uma imagem em níveis de cinza, onde os pixels que contém uma maior evidência de que seja vegetação, terá valores dissimilares de pixels onde há mínima evidência que será vegetação. \citeonline{Torres2014} revisou vários índices de vegetação para o mapeamento da fração de vegetação de plantio de trigo. Neste trabalho experimentaremos estes índices no contexto de detecção de copa de árvores através de imagens de satélite. 
+Basicamente um índice de vegetação~\cite{Torres2014}, é um cálculo sobre os valores espectrais de pixels, com o propósito de diferenciar os pixels de vegetação dos pixels de não-vegetação, tais como no solo, leitos de água, estradas, construções, entre outros. Um índice de vegetação, toma como entrada uma imagem colorida ou multiespectral\footnote{Uma imagem multiespectral consiste do imageamento de um mesmo objeto, tomado com base em diferentes comprimentos de ondas eletromagnéticas tais como luz visível, infravermelha, ultravioleta, raio-X ou qualquer outra faixa do espectro eletromagnético.}, e retorna uma imagem em níveis de cinza, onde os pixels que contém uma maior evidência de que seja vegetação, terá valores dissimilares dos pixels onde há mínima evidência que seja vegetação. \cite{Torres2014} revisou vários índices de vegetação para o mapeamento da fração de vegetação em plantio de trigo. Neste trabalho experimentaremos estes índices no contexto de detecção de copa de árvores através de imagens de satélite. 
 
-A entrada para os cálculos dos índices de vegetação são os valores R, G e B dos sistema de cores RGB, a normalização destes dada pela Equação(~\ref{eq:normRGB}) ou combinações de índices.
+A entrada para os cálculos dos índices de vegetação são os valores $R$, $G$ e $B$ dos sistema de cores RGB, a normalização destes dada pela Equação(~\ref{eq:normRGB}) ou combinações de índices.
 
 \begin{equation}
     r = \frac{R}{R+G+B}; g = \frac{G}{R+G+B}; b = \frac{B}{R+G+B}
@@ -31,7 +31,7 @@ $\textbf{Índice de cores da vegetação:}$
 
 $\textbf{Vegetativen:}$
 \begin{equation} 
-    VEG = \frac{g}{r^{a} b^{(1-a)}}  \ com \ a = 0.667 \ em \ sua \ referência %Não sei o porque deste errinho
+    VEG = \frac{g}{r^{a} b^{(1-a)}}  \ \text{com} \ a = 0.667
 \end{equation}
 
 $\textbf{Excesso de verde menos excesso de vermelho:}$
@@ -46,17 +46,17 @@ $\textbf{Índice Woebbecke:}$
 
 $\textbf{Combinação 1:}$
 \begin{equation}
-    COM(1) = 0.25ExG + 0.3ExGR + 0.33CIVE + 0.12VEG
+    COM(1) = 0.25*ExG + 0.3*ExGR + 0.33*CIVE + 0.12*VEG
 \end{equation}
 
 $\textbf{Combinação 2:}$
 \begin{equation}
-    COM(2) = 0.36ExG + 0.47CIVE + 0.17VEG
+    COM(2) = 0.36*ExG + 0.47*CIVE + 0.17*VEG
 \end{equation}
 
 \subsection{Método de Otsu e binarização}
 
-Segundo \cite{Gonzales2010}, o método de Otsu é ótimo no sentido de maximizar a variância entre classes. A ideia básica é separar os pixels em duas classes por um limiar apropriado, onde a variação de intensidade entre as classes seja máxima e a variação de intensidade dentro de cada classe seja mínima. O método de Otsu tem a propriedade importante de poder se basear inteiramente no histograma normalizado $p_i$, que dá a probabilidade de ocorrência de cada nível de cinza $i$ da imagem.
+Segundo \cite{Gonzales2010}, o método de Otsu é ótimo no sentido de maximizar a variância entre classes. A ideia básica é separar os pixels em duas classes por um limiar apropriado, onde a variação de intensidade entre as classes seja máxima e a variação de intensidade dentro de cada classe seja mínima. O método de Otsu tem a propriedade importante de poder se basear inteiramente no histograma normalizado $p_i$, que dá a probabilidade de ocorrência de cada nível de cinza $i$ na imagem.
 
 Seja $\{0, 1, 2, \ldots, L-1\}$, o conjunto de $L$ níveis de intensidade distintos em uma imagem digital de tamanho $M\times N$ pixels, e seja $n_{i}$, o número de pixels com intensidade $i$. O número total $MN$ de pixels na imagem é $MN = n_{0} + n_{1} + n_{2} + \ldots + n_{L-1} = M*N$. A probabilidade de ocorrência de cada pixel, também chamada de histograma normalizado, é dada  por $p_{i} = n_{i} / MN$, dos quais tem-se que:
 \begin{equation}
@@ -70,7 +70,7 @@ Agora, suponha selecionar um limite $T(k) = k, 0 < k < L-1$, e usá-lo para sepa
 
 Visto de outra maneira, $q_{1}(k)$ é a probabilidade da classe $c_{1}$ ocorrer. Da mesma forma, a probabilidade de ocorrência da classe $c_{2}$ é:
 \begin{equation}
-    q_{2}(k) = \sum_{i=k+1}^{L-1} p_{i} = 1- p_{1}(k)
+    q_{2}(k) = \sum_{i=k+1}^{L-1} p_{i} = 1- q_{1}(k)
 \end{equation}
 
 O valor médio da intensidade dos pixels em $c_{1}$ é:
@@ -111,70 +111,72 @@ Caso exista mais de um valor de $k$ que produza o valor máximo de $\sigma^{2}$,
 Uma vez obtido $k^{*}$, a imagem de entrada $f(x, y)$ é limiarizada da seguinte forma:
 \begin{equation}
       g(x,y) = \left \{  \begin{array}{cc}
-        1  & if \ f(x,y) > k^{*}\\
-        0  & if \ f(x,y) \leq  k^{*} \\
+        1,  & \text{se} \ f(x,y) > k^{*}\\
+        0,  & \text{se} \ f(x,y) \leq  k^{*} \\
     \end{array} \right \}
 \end{equation}
-para $x = 0,1,2,\ldots,M-1$ e $y = 0,1,2,\ldots,N-1$. Observe que todas as quantidades necessárias para avaliar a Equação~\ref{eq:var_inter} são obtidas usando apenas o histograma de $f(x,y)$. Além do limiar ideal, outras informações sobre a imagem segmentada podem ser extraídas do histograma. Por exemplo, $p_{1}$ ($k^{*}$) e $p_{2}$ ($k^{*}$), indicam as probabilidades de cada classe conforme o limiar $k^*$. Da mesma forma, as médias $m_{1} (k^{*})$ e $m_{2} (k^{*})$ são estimativas da intensidade média das classes na imagem original.
-%FIGURAS: RGB, EM NÍVEL DE CINZA, BINARIZADA E COM SEU THRESHOLD
-\begin{figure}[tb]
-\begin{center}
-    \caption{Exemplo do método de Otsu e binarização} 
+para $x = 0,1,2,\ldots,M-1$ e $y = 0,1,2,\ldots,N-1$. Observe que todas as quantidades necessárias para avaliar a Equação~\ref{eq:var_inter} são obtidas usando apenas o histograma de $f(x,y)$. Além do limiar ideal, outras informações sobre a imagem segmentada podem ser extraídas do histograma. Por exemplo, $q_{1}$($k^{*}$) e $q_{2}$($k^{*}$), indicam as probabilidades de cada classe conforme o limiar $k^*$. Da mesma forma, as médias $m_{1} (k^{*})$ e $m_{2} (k^{*})$ são estimativas da intensidade média das classes na imagem original. A Figura~\ref{fig:Otsu} ilustra a aplicação do método de Otsu. Em (a) é dada a imagem em níveis de cinza sobre a qual é aplicada o método; em (c) é mostrado histograma da imagem (a) juntamente com o \textit{threshold} encontrado pelo método de Otsu, denotado pela linha tracejada. Em (b) é dada a imagem binarizada resultante da aplicação do \textit{threshold}. Neste caso foi considerado que os valores abaixo do \textit{threshold} recebem o valor 1 e os valores acima ou igual ao \textit{threshold} recebem o valor 0.
 
-	\includegraphics[height=4cm]{images/mangaColor.png} \quad
-	\includegraphics[height=4cm]{images/mangaGray.png} \quad 
-	\includegraphics[height=4cm]{images/mangaBinaria.png}\quad
-	\includegraphics[height=4.5cm]{images/mangaThreshold.png} \quad
+ 
+\begin{figure}[h]
+\center
+\caption{Ilustração da aplicação do método de Otsu.}
+\subfigure[TCC UFG/images][Imagem em nível de cinza]{\includegraphics[width=7cm]{mangaGray.png}} \ \ \ 
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}} \ \ \
+\subfigure[TCC UFG/images][Threshold da imagem]{\includegraphics[width=7.5cm]{mangaThreshold.png}}
+\label{fig:Otsu}
 
 Fonte: Elaborada pela autora
-\label{otsu}
-\end{center}
 \end{figure}
 
 
 \subsection{Morfologia Matemática para imagens binárias}
 
-Na área de Biologia a palavra `morfologia' geralmente lida com a forma e a estrutura de animais e plantas. Em processamento de imagens, morfologia matemática constitui ferramentas para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A base para a descrição das operações morfológicas é a  teoria dos conjuntos. Este trabalho, descreve os conceitos básicos de morfologia matemática para imagens tomando como base o livro de \citeonline{Gonzales2010}.
+Na área de Biologia a palavra `morfologia' geralmente lida com a forma e a estrutura de animais e plantas. Em processamento de imagens, morfologia matemática constitui ferramentas para extrair componentes de imagem que são úteis na representação e descrição da forma da região. A base para a descrição das operações morfológicas é a  teoria dos conjuntos. Este trabalho descreve os conceitos básicos de morfologia matemática para imagens binárias tomando como base o livro de \cite{Gonzales2010}.
 
-Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $Z^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto na imagem. 
+Em imagens binárias especialmente, seus conjuntos contém elementos do espaço inteiro $\mathbb{Z}^{2}$, em que cada elemento de um conjunto é uma tupla (vetor 2-D), cujas coordenadas são de um pixel de objeto na imagem. 
 
 A morfologia para imagens binárias contém dois tipos de conjuntos de pixels: objetos ($A$) e elementos estruturantes ($B$). Os objetos são conjuntos de pixels dos objetos de interesse, já os elementos estruturantes são especificados para fazer análise e processamentos dos objetos de interesse, e normalmente levam em conta as características geométricas destes. 
 
 \subsubsection{Erosão}
-Sendo $A$ e $B$ conjuntos em $Z^{2}$, a erosão de $A$ por $B$, denota $A \ominus B$, é definida como:
+Sendo $A$ e $B$ conjuntos em $\mathbb{Z}^{2}$, a erosão de $A$ por $B$, denota $A \ominus B$, é definida como:
 \begin{equation}
-     A\ominus B = \left\{ z|(B)_{z} \subseteq A\right\}
+     A\ominus B = \left\{z|(B)_{z} \subseteq A\right\}
      \label{eq:erosao}
 \end{equation}
-onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. Na prática, a erosão elimina partes nas extremidades dos objetos, podendo servir ao propósito de separação de objeto conectados. Contudo ela diminui o tamanho dos objetos. 
+onde $A$ é um conjunto de pixels de objetos, $B$ é um elemento estruturante e $z$ são translações (deslocamentos) de $B$ ao longo do plano da imagem. Em outras palavras, a Equação~\ref{eq:erosao} indica que a erosão de $A$ por $B$ é o conjunto de todos os pontos $z$, de modo que $B$, transladado por $z$, está contido em $A$. Na prática, a erosão elimina partes nas extremidades dos objetos, podendo servir ao propósito de separação de objeto conectados. Contudo, ela diminui o tamanho dos objetos. 
 
-%IMAGEM EROSÃO
-\begin{figure}[ht]
-\centering
-\caption{Exemplo de erosão}
-\includegraphics[width=7cm, height=7cm]{images/mangaErodida.png}
+A figura \ref{fig:erosao} ilustra a aplicação da operação de erosão. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da operação de erosão.  O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a operação de erosão. 
 
+\begin{figure}[h]
+\center
+\caption{Ilustração da aplicação da operação de erosão.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem erodida]{\includegraphics[width=7cm]{mangaErodida.png}}
+\qquad
+\label{fig:erosao}
 Fonte: Elaborada pela autora
-\label{fig:conceitos}
 \end{figure}
 
 \subsubsection{Dilatação}
-Novamente sendo $A$ e $B$ conjuntos em $Z^{2}$, a dilatação de $A$ por $B$, denotada como $A \oplus B$, é definida como: 
+Novamente sendo $A$ e $B$ conjuntos em $\mathbb{Z}^{2}$, a dilatação de $A$ por $B$, denotada como $A \oplus B$, é definida como: 
 \begin{equation}
-    A \oplus B = \left \{ Z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
+    A \oplus B = \left \{ z | (\hat{B})_{z}\cap A \neq \varnothing \right \}
 \end{equation}
-sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos z, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$. Na prática a dilação expande as fronteiras dos objetos, podendo servir para ligar partes desconexas de um mesmo objeto. 
+sendo $\hat B $ a reflexão de $B$. Em resumo, a dilatação de $A$ por $B$ é o conjunto de todos os deslocamentos $z$, de modo que os elementos de $\hat B$ se sobrepõem a pelo menos um elemento de $A$. Na prática a dilação expande as fronteiras dos objetos, podendo servir para ligar partes desconexas de um mesmo objeto. Contudo, ela aumenta o tamanho dos objetos.
+
+A figura \ref{fig:dilatacao} ilustra a aplicação da operação de dilatação. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da operação de dilatação.  O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a operação de dilatação.
 
 %FIGURA DILATAÇÃO
-\begin{figure}[ht]
-\centering
-\caption{Exemplo de dilatação}
-\includegraphics[width=7cm, height=7cm]{images/mangaDilatada.png}
+\begin{figure}[h]
+\center
+\caption{Ilustração da aplicação da operação de dilatação.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem dilatada]{\includegraphics[width=7cm]{mangaDilatada.png}}
+\label{fig:dilatacao}
 
 Fonte: Elaborada pela autora
-\label{fig:conceitos}
 \end{figure}
-
 
 \subsubsection{Abertura}
 
@@ -186,14 +188,17 @@ A abertura do conjunto $A$ pelo elemento estruturante $B$, indicado por $A \circ
 Assim, a abertura $A$ por $B$ é a erosão de $A$ por $B$, seguida de uma dilatação do resultado por $B$. 
 A abertura geralmente suaviza o contorno de um objeto, quebra os istmos estreitos e elimina saliências finas.
 
+A figura \ref{fig:abertura} ilustra a aplicação da operação de abertura. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da operação de abertura.  O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a operação de abertura.
+
 %FIGURA ABERTURA
-\begin{figure}[ht]
-\centering
-\caption{Exemplo de abertura}
-\includegraphics[width=7cm, height=7cm]{images/mangaAbertura.png}
+\begin{figure}[h]
+\center
+\caption{Ilustração da aplicação da operação de abertura.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem com abertura]{\includegraphics[width=7cm]{mangaAbertura.png}}
+\label{fig:abertura}
 
 Fonte: Elaborada pela autora
-\label{fig:conceitos}
 \end{figure}
 
 \subsubsection{Fechamento}
@@ -204,16 +209,18 @@ O fechamento do conjunto $A$ pelo elemento estruturante $B$, denominado $A \bull
 ou seja, o fechamento de $A$ por $B$ é dado pela dilatação de $A$ por $B$, seguido pela erosão do resultado por $B$. 
 O fechamento tende a suavizar seções de contornos, mas, ao contrário da abertura, geralmente funde quebras estreitas e golfos finos e longos, elimina pequenos orifícios e preenche lacunas no contorno. 
 
+A figura \ref{fig:fechamento} ilustra a aplicação da operação de fechamento. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da operação de fechamento. O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a operação de fechamento. 
+
 %FIGURA FECHAMENTO
-\begin{figure}[ht]
-\centering
-\caption{Exemplo de fechamento}
-\includegraphics[width=7cm, height=7cm]{images/mangaFechamento.png}
+\begin{figure}[h]
+\center
+\caption{Ilustração da aplicação da operação de fechamento.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem com fechamento]{\includegraphics[width=7cm]{mangaFechamento.png}}
+\label{fig:fechamento}
 
 Fonte: Elaborada pela autora
-\label{fig:conceitos}
 \end{figure}
-
 
 \subsection{Transformada de Distância}
 
@@ -222,56 +229,60 @@ A transformada da distância~\cite{Fabbri2008} mede a distância de cada ponto d
 
 Uma métrica bastante conhecida e usada em processamento de imagens denominada $L_{p}$ \cite{Maurer2003}, que é dada pela seguinte Equação:
 \begin{equation}
-    \Delta (x,y) = \left ( \sum_{i=1}^{k}\mid x_{i} - y_{i} \mid ^p \right )\tfrac{1}{p} \ \ ,
+    \Delta (P,Q) = \left ( \sum_{i=1}^{k}\mid P_{i} - Q_{i} \mid ^p \right )\tfrac{1}{p} \ \ ,
 \end{equation}
-onde $x$ e $y$ são $k$-tuplas, $x_{i}$ e $y_{i}$  são as $i$-ésimas coordenadas de $x$ e $y$, e $1 \leq p \leq \infty$. No caso de imagens bidimensionais o número de coordenadas $k$ é igual a 2. As métricas $L_{1}$, $L_{2}$ e $L_{\infty}$ são conhecidas como distâncias de Manhattan ou quarteirão, Euclidiana e de tabuleiro de xadrez. 
+onde $P$ e $Q$ são $k$-tuplas, $P_{i}$ e $Q_{i}$  são as $i$-ésimas coordenadas de $P$ e $Q$, e $1 \leq p \leq \infty$. No caso de imagens bidimensionais o número de coordenadas $k$ é igual a 2. As métricas $L_{1}$, $L_{2}$ e $L_{\infty}$ são conhecidas como distâncias de Manhattan ou quarteirão, Euclidiana e de tabuleiro de xadrez. 
 
-Uma métrica $\Delta$: $R^{k} \times R^{k} \rightarrow R$ satisfaz as seguintes propriedades:
+Uma métrica $\Delta$: $\mathbb{R}^{k} \times \mathbb{R}^{k} \rightarrow \mathbb{R}$ satisfaz as seguintes propriedades:
 
-$\textbf{Propriedade 1}$: Positividade\\  \indent \indent $\Delta (x,y) = 0 \ \  \text{se} \ \ x = y$
+$\textbf{Propriedade 1}$: Positividade\\  \indent \indent $\Delta (P,Q) = 0 \ \  \text{se} \ \ P = Q$
 
 $\textbf{Propriedade 2}$: Simetria\\ 
-\indent \indent $\Delta(x,y) = \Delta(y,x) \ \text{para quaisquer} \ x \ \text{e} \ y $
+\indent \indent $\Delta(P,Q) = \Delta(Q,P) \ \text{para quaisquer} \ P \ \text{e} \ Q $
 
 $\textbf{Propriedade 3}$: Desigualdade triangular\\
-\indent \indent $\Delta(x,z)\leq  \Delta(x,y) + \Delta(y,z) \ \text{para quaisquer} \ x , \ y, \ and \ z $
+\indent \indent $\Delta(P,S)\leq  \Delta(P,Q) + \Delta(Q,S) \ \text{para quaisquer} \ P , \ Q, \ and \ S $
 
 $\textbf{Propriedade 4}$: Monotonicidade\\ 
-\indent \indent Seja $x$ e $y$ duas $k$-tuplas que diferem apenas nos valores das $d$-ésimas coordenadas (ou seja, $x_{i}$ = $y_{i}$, $i \neq d$). Para concretude, assuma que $x_{d}$ < $y_{d}$. Para qualquer $\textbf{u}$ e $\textbf{v}$ de tal forma que 1) $\Delta$(x,$\textbf{u}$) $\leq$ $\Delta$(x,v) e $\Delta$(y,v) < $\Delta$(y,$\textbf{u}$) ou 2) $\Delta$(x,$\textbf{u}$) < $\Delta$(x,v) e $\Delta$(y,v) $\leq$ $\Delta$(y,$\textbf{u}$) tem-se que $u_{d} < u_{d}$.
+\indent \indent Seja $P$ e $Q$ duas $k$-tuplas que diferem apenas nos valores das $d$-ésimas coordenadas (ou seja, $P_{i}$ = $Q_{i}$, $i \neq d$). Para concretude, assuma que $P_{d}$ < $Q_{d}$. Para qualquer $U$ e $V$ de tal forma que 1) $\Delta$(P,$U$) $\leq$ $\Delta$(P,V) e $\Delta$(Q,V) < $\Delta$(Q,$U$) ou 2) $\Delta$(P,$U$) < $\Delta$(P,V) e $\Delta$(Q,V) $\leq$ $\Delta$(Q,$U$) tem-se que $U_{d} < U_{d}$.
 
 $\textbf{Propriedade 5}$\\
-\indent \indent Seja $\textbf{u}$ e $\textbf{v}$ duas $k$-tuplas com valores que diferem apenas nas  $d$-ésimas coordenadas (ou seja, $u_{d}$ = $v_{d}$. Seja $u$ e $v$ $k$-tuplas com valores idênticos da $d$-ésimas coordenas (isto é, $u_d = u_v$). Se $\Delta(x,u) \leq \Delta(x, v)$, \text{então } $\Delta(y,u) \leq \Delta(y, v)$.
+\indent \indent Seja $U$ e $V$ duas $k$-tuplas com valores que diferem apenas nas  $d$-ésimas coordenadas (ou seja, $U_{d}$ = $V_{d}$. Seja $U$ e $V$ $k$-tuplas com valores idênticos da $d$-ésimas coordenas (isto é, $U_d = V_d$). Se $\Delta(P,U) \leq \Delta(P, V)$, \text{então } $\Delta(Q,U) \leq \Delta(Q, V)$.
 
+A figura \ref{fig:transDistancia} ilustra a transformada da distância. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da transformada da distância.  O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a transformada da distância. 
 
 %FIGURA TRANSFORMADA DA DISTANCIA
-\begin{figure}[ht]
-\centering
-\caption{Exemplo de Transformada da Distância}
-\includegraphics[width=7cm, height=7cm]{images/mangaTransDistancia.png}
+\begin{figure}[h]
+\center
+\caption{Ilustração da transformada da distância.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem com Transformada da distância]{\includegraphics[width=7cm]{mangaTransDistancia.png}}
+\label{fig:transDistancia}
 
 Fonte: Elaborada pela autora
-\label{fig:conceitos}
 \end{figure}
 
 \subsection{Watershed}
-Segundo \citeonline{Gonzales2010}, o conceito de \textit{watershed} (bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões, duas coordenadas espaciais versus intensidade. Nessa interpretação ``topográfica'', consideramos três tipos de pontos: 1) pontos pertencentes a um mínimo regional; 2) pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um mínimo único; e 3) pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2 é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
+Segundo \cite{Gonzales2010}, o conceito de \textit{watershed} (bacia hidrográfica) é baseado na visualização de uma imagem em três dimensões; duas coordenadas espaciais \textit{versus} intensidade. Nessa interpretação ``topográfica'', consideramos três tipos de pontos: 1) pontos pertencentes a um mínimo regional; 2) pontos nos quais uma gota de água, se colocada no local de qualquer um desses pontos, cairia com certeza em um mínimo único; e 3) pontos em que a água teria a mesma probabilidade de cair para mais de um mínimo. Para um mínimo regional específico, o conjunto de pontos que satisfazem a condição 2 é chamado de bacia hidrográfica ou bacia hidrográfica desse mínimo. Os pontos que satisfazem a condição 3, formam linhas de crista na superfície topográfica e são chamados de linhas de divisão ou linhas de bacias hidrográficas.
 
 
-O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica. Uma das principais aplicações, é a extração de objetos quase uniformes. Na prática, geralmente, a segmentação de bacias hidrográficas é aplicada ao gradiente de uma imagem, e não a própria imagem. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente. Assim, nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.
+O principal objetivo desse algoritmo, é encontrar as linhas da bacia hidrográfica. Uma das principais aplicações, é a extração de objetos de tonalidades quase uniformes. Na prática, geralmente, a segmentação de bacias hidrográficas é aplicada ao gradiente de uma imagem, e não a própria imagem. Regiões caracterizadas por pequenas variações de intensidade têm pequenos valores de gradiente. Assim, nesta formulação, os mínimos regionais das bacias hidrográficas se correlacionam muito bem com o pequeno valor do gradiente correspondente aos objetos de interesse.
 
-A construção da barragem do algoritmo de segmentação das bacias hidrográficas, é baseada em imagens binárias, que são membros do espaço 2-D de inteiro $Z^{2}$. A maneira mais simples de construir barragens que separam conjuntos de pontos binários, é usar a dilatação morfológica.
-Primeiramente, para a construção das barragens é aplicado a dilatação. Posteriormente, possui a etapa de inundação $n-1$, se a água derrama de uma bacia para outra, uma barragem deve ser construída para impedir que isso aconteça. Seja $M_{1}$ e $M_{2}$  conjuntos de coordenadas de pontos em dois mínimos regionais. Seja $C_{n-1} (M_{1})$ e $C_{n-1} (M_{2})$ os conjuntos de coordenadas de pontos na bacia hidrográfica associado a esses dois mínimos no estágio $n-1$ da inundação.
+A construção da barragem do algoritmo de segmentação das bacias hidrográficas, é baseada em imagens binárias, que são membros do espaço 2-D de inteiro $\mathbb{Z}^{2}$. A maneira mais simples de construir barragens que separam conjuntos de pontos binários, é usar a dilatação morfológica.
+Primeiramente, para a construção das barragens é aplicado a dilatação que simula a inundação. Se a água derrama de uma bacia para outra, uma barragem deve ser construída para impedir que isso aconteça. Seja $M_{1}$ e $M_{2}$  conjuntos de coordenadas de pontos em dois mínimos regionais. Seja $C_{n-1} (M_{1})$ e $C_{n-1} (M_{2})$ os conjuntos de coordenadas de pontos na bacia hidrográfica associado a esses dois mínimos no estágio $n-1$ da inundação.
 
 Dois componentes conectados que se tornaram um único componente, indicam que a água entre as duas bacias hidrográficas, se fundiu na etapa de inundação $n$. Esse componente fundido é indicado por $q$. 
 
-Suponha que cada um dos componentes conectados seja dilatado pelo elemento estruturador, sujeito a duas condições: 1) A dilatação deve ser restringida a $q$ (isso significa que o centro do elemento estruturador pode ser localizado apenas nos pontos em $q$ durante a dilatação); e 2) A dilatação não pode ser realizada em pontos que causariam a união dos conjuntos.
+Suponha que cada um dos componentes conectados seja dilatado pelo elemento estruturante, sujeito a duas condições: 1) A dilatação deve ser restringida a $q$ (isso significa que o centro do elemento estruturante pode ser localizado apenas nos pontos em $q$ durante a dilatação); e 2) A dilatação não pode ser realizada em pontos que causariam a união dos conjuntos.
 
-É evidente que os únicos pontos em $q$, que satisfazem as duas condições, descrevem o caminho conectado de um pixel com hachuras cruzadas. Esse caminho é a barragem de separação desejada no estágio $n$ das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
+ É evidente que os únicos pontos em $q$, que satisfazem as duas condições, descrevem o caminho conectado de um pixel com hachuras cruzadas. Esse caminho é a barragem de separação desejada no estágio $n$ das inundações. A construção da barragem nesse nível de inundação, é concluída definindo todos os pontos no caminho apenas determinado para um valor maior que o valor máximo de intensidade possível da imagem (por exemplo, maior que 255 para uma imagem de 8 bits). Isso impedirá que a água atravesse a parte da barragem concluída à medida que o nível de inundação aumenta. 
+
+A figura \ref{fig:conceitos} ilustra o \textit{Watershed}. Primeiramente as bacias hidrográficas são parcialmente inundadas no estágio n-1 da inundação; As inundações no estágio n mostram que a água derramou entre bacias; É mostrado o elemento estruturante usado para dilatação; Resultado da dilatação e construção da barragem.
 
 %FIGURA WATERSHED
 \begin{figure}[ht]
 \centering
-\caption{Exemplo de ilustração do Watershed}
+\caption{Ilustração do \textit{Watershed}.}
 \includegraphics[width=8cm, height=10cm]{images/watershed.png}
 
 Fonte: \citeonline{Gonzales2010}
@@ -279,10 +290,8 @@ Fonte: \citeonline{Gonzales2010}
 \end{figure}
 
 \subsection{Filtragem máxima local}
- 
-No trabalho de \cite{dralle1996}  \sergio{foi feita a transformação da borda [COMO?]} da \sergio{subparcela [O QUE É ESSE TERMO?]} da imagem, em seguida foi aplicada a suavização do núcleo. 
- 
-A definição de \textit{suavização do núcleo \sergio{ACHO QUE NÃO É O TERMO CORRETO}} de uma imagem com um kernel gaussiano arbitrário, é determinado pelos três parâmetros $\sigma_{1}$, $\sigma_{2},$ e  $\rho$. Seja $x_{i} = (x_{i1},x_{i2})^{T}$ onde \textit{i=1,2, ..., I}, denotam os centros de pixels dos pixels \textit{I} de uma imagem. Coloque:
+
+Basicamente o método de filtragem máxima local aplica na imagem uma convolução por um \textit{kernel} de suavização bidimensional em formato de `chapéu mexicano'. Após a convolução procura-se pelos pontos máximos na imagem resultante. Tradicionalmente, um dos trabalhos pioneiros de filtragem máxima local~\cite{dralle1996}, que inicialmente denominou o método de suavização por \textit{kernel}, o \textit{kernel} é dado por uma função gassiana bidimensional. Em \cite{dralle1996} este foi definido com um kernel gaussiano arbitrário determinado pelos parâmetros $\sigma_{1}$, $\sigma_{2},$ e  $\rho$. Seja $x_{i} = (x_{i1},x_{i2})^{T}$ onde \textit{i=1,2, ..., I}, denotam pixels centrais dos pixels \textit{I} de uma imagem. Seja:
  \begin{equation}
      \sum  = \binom{\sigma_{1}^{2} \ \ \ \ \ \ \ \ \rho\sigma_{1}\sigma_{2}}{\rho\sigma_{1}\sigma_{2} \ \ \ \ \ \ \ \ \sigma_{2}^{2}} 
  \end{equation}
@@ -291,58 +300,49 @@ A definição de \textit{suavização do núcleo \sergio{ACHO QUE NÃO É O TERM
  \begin{equation}
      G_{ij} = k_{i} \ exp \left ( -\frac{1}{2}(x_{i} - x_{j})^T \sum ^{-1}(x_{i} - x_{j})  \right )
  \end{equation}
-onde \textit{i = 1,2, ..., I}, e $k_{i}$ é uma constante de normalização tal que:
+onde \textit{i = 1,2, ..., I}, \textit{j = 1,2, ..., I} e $k_{i}$ é uma constante de normalização tal que:
 \begin{equation}
     \sum_{j=1}^{I} G{ij}= 1, \ \ \ \ \ \ \ \ i = 1,2,..., I
 \end{equation}
  Foi notado que $k_{i}$ é essencialmente constante para pixels que não estão próximos da borda da imagem.
  
- Seja $V_{i}$, \textit{i=1,2, ..., I}, denota os valores de nível de cinza dos pixels em uma imagem. Em seguida, os níveis de cinza da imagem suavizada do kernel são fornecidos pela operação de filtragem:
+ Seja $V_i$, \textit{i=1,2, ..., I} os valores de nível de cinza dos pixels em uma imagem. Em seguida, os níveis de cinza da imagem suavizada do kernel são fornecidos pela operação de filtragem:
  \begin{equation}
      V'_{i} = \sum_{j=1}^{I}G_{ij}V_{j}, \ \ \ \ i=1,2, ...,I
  \end{equation}
- Neste estudo, foi escolhido por simplicidade um núcleo isotrópico, $\rho = 0$ e $\sigma_{1} = \sigma_{2} = \sigma$. 
  
- Posteriormente, foi detalhado o processo de determinação de máximos acima do modo. Remova a área fora de todas as subparcelas brutas da imagem suavizada e calcule um histograma dos níveis de cinza dos pixels restantes. Se for necessário desenhar linhas de contorno na imagem suavizada, a linha mais longa será antecipada para o nível de cinza mais comum, isto é, o modo (o nível de cinza do máximo do histograma). Picos abaixo desse valor não devem corresponder às copas das árvores, mas explicarão a variação na intensidade da luz nos galhos mais baixos das árvores ou nas estruturas entre as árvores.
- 
-
-O histograma bruto nem sempre tem um modo inequívoco. Ao suavizar o histograma bruto com uma distribuição Gaussiana unidimensional (semelhante ao suavização com uma distribuição bidimensional na Eq. 2.27 com um desvio padrão apropriado, uma distribuição com um modo inequívoco pode ser recuperada. Deixe $V_{mode}$ denotar o modo do histograma suavizado. Depois, contamos para cada subtrama o número de máximos dentro das bordas da subtrama com nível de cinza acima do modo $V_{mode}$.
-%Voltar aqui!!!%
+Em \cite{dralle1996} é calculado o histograma de níveis de cinza da imagem filtrada,e é considerado como árvores picos cujo valor é maior ou igual ao nível cinza correspondente à moda do histograma, isto é, o nível de cinza mais comum na imagem (nível de cinza de frequência máxima no histograma). Picos abaixo desse valor não são considerados como árvores, mas indicam uma variação na intensidade de luz.
  
 \subsection{Rotulação de Componentes conectados}
 
-Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitas aplicações automatizadas de análise de imagem. $A$ é um conjunto de pixels de objetos que consiste em um ou mais componentes conectados. Seja $X_{0}$ um pixel de objeto de $A$. Pode-se extrair o componente conectado pelo procedimento interativo dado por: 
+Segundo \cite{Gonzales2010}, a capacidade de extrair componentes conectados de uma imagem binária é central para muitas aplicações automatizadas de análise de imagem. Seja $A$ um conjunto de pixels de objetos que consiste em um ou mais componentes conectados. Seja $X_{0}$ um pixel de objeto de $A$. Pode-se extrair o componente conectado pelo procedimento interativo dado por: 
 \begin{equation}
     X_{k} = (X_{k-1} \oplus B) \cap I \qquad \qquad k = 1,2,3...
 \end{equation}
 onde $B$ é o elemento estruturante que define a conectividade. O procedimento termina quando $X_{k} = X_{k-1}$. Nesse momento pode-se extrair o componente de A ou rotular este. Este procedimento deve ser repetido para um novo pixel de objeto não rotulado, até que todos os componentes conectados sejam extraídos ou rotulados.
+
+A figura \ref{fig:rotulacao} ilustra a rotulação de componentes conectados. As imagens usadas foram extraídas de nossa base de imagens. Em (a) é dada a imagem binarizada; Em (b) é dada a imagem resultante da aplicação da rotulação de componentes conectados. O elemento estruturante usado é um retângulo de dimensão $3 \times 3$ para a rotulação de componentes conectados.
+
 %FIGURAS: Binária e rotulada
-\begin{figure}[tb]
-\begin{center}
-    \caption{Exemplo de rotulação de componentes conectados} 
-    
-	\includegraphics[height=4cm]{images/mangaBinaria.png}\quad
-	\includegraphics[height=4cm]{images/mangaRotulada.png} \quad
+\begin{figure}[h]
+\center
+\caption{Ilustração da rotulação de componentes conectados.}
+\subfigure[TCC UFG/images][Imagem binarizada]{\includegraphics[width=7cm]{mangaBinaria.png}}   \ \ \
+\subfigure[TCC UFG/images][Imagem rotulada]{\includegraphics[width=7cm]{mangaRotulada.png}}
+\label{fig:rotulacao}
 
 Fonte: Elaborada pela autora
-\label{rotulacao}
-\end{center}
 \end{figure}
-
-
-%Exemplo de rotulação de componentes conectados:
-
-
 
 \subsection{Medidas de desempenho de detecção}
 
-Conforme \citeonline {Szeliski2010}, pode-se quantificar o desempenho de um algoritmo de detecção de objetos, contando  o número de correspondências verdadeiras e falsas, e falhas de correspondência, usando as seguintes definições:
+Conforme \cite{Szeliski2010}, pode-se quantificar o desempenho de um algoritmo de detecção de objetos, contando  o número de correspondências verdadeiras e falsas, e falhas de correspondência, usando as seguintes definições:
 
 \textbf{TP:} verdadeiros positivos, isto é, a quantidade de árvores que foram preditas como árvores;
 
 \textbf{FN:} falsos negativos, a quantidade de árvores que não foram detectadas;
 
-\textbf{FP:} falsos positivos, a quantidade de objetos preditos como árvores que não são árvores;
+\textbf{FP:} falsos positivos, a quantidade de objetos preditos como árvores, que não são árvores;
 
 \textbf{TN:} negativos verdadeiros, a quantidade de objetos que não são árvores, e que não foram identificados como tal.
 
@@ -353,7 +353,7 @@ Através das medidas elementares anteriores, pode-se compor várias medidas, tai
 \begin{equation}
     TPR: \frac{TP}{TP + FN} = \frac{TP}{P}
 \end{equation}
-mede a taxa dos exemplos positivos que foram preditos corretamentos, ou seja, a taxa de árvores que foram detectadas.\\
+mede a taxa dos exemplos positivos que foram preditos corretamente, ou seja, a taxa de árvores que foram detectadas.\\
 
 \noindent \textbf{Taxa de falso positivos (\textit{false positive rate} -- FPR)}, também conhecida como taxa de falso alarme:
 \begin{equation}
@@ -361,7 +361,7 @@ mede a taxa dos exemplos positivos que foram preditos corretamentos, ou seja, a 
 \end{equation}
 mede a taxa de objetos preditos erroneamente como árvores.\\
 
-\noindent \textbf{Valor preditivo positivo (\textit{positive predictive value} -- PPV),} também chamada precisão (\textit{precision}):,
+\noindent \textbf{Valor preditivo positivo (\textit{positive predictive value} -- PPV),} também chamado de precisão (\textit{precision}):,
 \begin{equation}
     PPV = \frac{TP}{TP+FP}
 \end{equation}
@@ -371,7 +371,8 @@ mede a probabilidade de um objeto identificado como árvore, ser de fato uma ár
 \begin{equation}
     ACC = \frac{TP+TN}{P+N};
 \end{equation}
+mede a taxa de acerto da classificação entre árvore e não árvore.
 
 \section{Considerações finais}
 
-Este capítulo abordou os conceitos principais de processamento de imagens que serão utilizados no desenvolvimento de metodologias para a detecção e contagem de árvores com base em imagens de satélite, os quais são: índices de vegetação, binarização, morfologia matemática, transformada da distância, segmentação baseada no conceito de inundação (\textit{watershed}), e rotulação. Por fim apresentamos medidas de desempenho de detecção que serão usadas para mensurar a qualidade dos resultados de identificação e contagem de árvores. No próximo capítulo são categorizadas e descritas as principais pesquisas de detecção e contagem de plantas da literatura.
+Este capítulo abordou os conceitos principais de processamento de imagens que serão utilizados no desenvolvimento de metodologias para a detecção e contagem de árvores com base em imagens de satélite, os quais são: índices de vegetação, binarização, morfologia matemática, transformada da distância, segmentação baseada no conceito de inundação (\textit{watershed}), filtragem máxima local e rotulação. Por fim apresentamos medidas de desempenho de detecção que serão usadas para mensurar a qualidade dos resultados de identificação e contagem de árvores. No próximo capítulo são categorizadas e descritas as principais pesquisas de detecção e contagem de plantas da literatura.
